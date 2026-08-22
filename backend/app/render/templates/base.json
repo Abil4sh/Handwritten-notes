@@ -1,0 +1,33 @@
+{
+  "id": "base",
+  "name": "Base",
+  "version": 1,
+  "page": {
+    "margins_mm": { "top": 22, "bottom": 20, "left": 20, "right": 18 },
+    "cue_column": null,
+    "bottom_reserved_mm": 0,
+    "page_numbers": true,
+    "rules": []
+  },
+  "title": {
+    "size_pt": 26,
+    "leading_mult": 1.3,
+    "space_after_mm": 4,
+    "underline": false
+  },
+  "ink": { "accent": "#8a3b2f", "rule": "#9aa4b2" },
+  "blocks": {
+    "heading_1": { "size_pt": 20, "leading_mult": 1.35, "space_before_mm": 7, "space_after_mm": 2.5, "underline": true },
+    "heading_2": { "size_pt": 16, "leading_mult": 1.4, "space_before_mm": 5, "space_after_mm": 2.0 },
+    "heading_3": { "size_pt": 14, "leading_mult": 1.4, "space_before_mm": 4, "space_after_mm": 1.5 },
+    "paragraph": { "size_pt": 13, "leading_mult": 1.45, "space_after_mm": 2.5 },
+    "bullet": { "size_pt": 13, "leading_mult": 1.45, "marker": "\u2022", "indent_mm": 5, "hanging_indent_mm": 5, "space_after_mm": 1.5 },
+    "numbered": { "size_pt": 13, "leading_mult": 1.45, "indent_mm": 5, "hanging_indent_mm": 6, "space_after_mm": 1.5 },
+    "definition": { "size_pt": 13, "leading_mult": 1.45, "indent_mm": 3, "hanging_indent_mm": 3, "space_after_mm": 2.5 },
+    "example": { "size_pt": 12, "leading_mult": 1.45, "indent_mm": 5, "space_after_mm": 2.5 },
+    "formula": { "size_pt": 15, "leading_mult": 1.45, "centered": true, "space_before_mm": 3, "space_after_mm": 3, "accent": true },
+    "callout": { "size_pt": 13, "leading_mult": 1.45, "indent_mm": 5, "space_before_mm": 2, "space_after_mm": 2.5, "left_bar": true, "accent": true },
+    "quote": { "size_pt": 12, "leading_mult": 1.45, "indent_mm": 6, "space_before_mm": 2, "space_after_mm": 2.5, "left_bar": true },
+    "divider": { "size_pt": 13, "leading_mult": 1.45, "space_before_mm": 4, "space_after_mm": 4 }
+  }
+}

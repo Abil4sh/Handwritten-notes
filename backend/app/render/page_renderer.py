@@ -2,63 +2,25 @@
 
 Turns a Note into a PDF. Owns page geometry, line breaking, and pagination.
 
-Still no jitter -- that is Step 5. What this step adds is paper: a background
-drawn under every page, and, on ruled paper, leading snapped to the ruling
-pitch so that every baseline lands on a line.
+Every visual decision comes from the template config. This module contains no
+template names -- if it did, the system would not be config-driven and adding a
+template would mean editing the renderer.
 """
 
 import math
-from dataclasses import dataclass
 
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
-from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfgen import canvas
 
 from app.notes.schema import Note
 from app.render.fonts import load_fonts
 from app.render.handwriting import HandwritingRenderer, get_renderer
 from app.render.paper import Paper, draw_background, get_paper
-
-
-@dataclass(frozen=True)
-class BlockStyle:
-    """How one kind of block is laid out. Becomes template config in Step 6."""
-
-    size_pt: float = 13.0
-    leading_mult: float = 1.45
-    space_before_mm: float = 0.0
-    space_after_mm: float = 2.5
-    indent_mm: float = 0.0
-    hanging_indent_mm: float = 0.0
-    marker: str = ""
-    underline: bool = False
-    centered: bool = False
-    left_bar: bool = False
-
-
-STYLES: dict[str, BlockStyle] = {
-    "heading_1": BlockStyle(size_pt=20, space_before_mm=7, space_after_mm=2.5, underline=True),
-    "heading_2": BlockStyle(size_pt=16, space_before_mm=5, space_after_mm=2.0),
-    "heading_3": BlockStyle(size_pt=14, space_before_mm=4, space_after_mm=1.5),
-    "paragraph": BlockStyle(),
-    "bullet": BlockStyle(marker="\u2022", indent_mm=5, hanging_indent_mm=5, space_after_mm=1.5),
-    "numbered": BlockStyle(indent_mm=5, hanging_indent_mm=6, space_after_mm=1.5),
-    "definition": BlockStyle(indent_mm=3, hanging_indent_mm=3),
-    "example": BlockStyle(size_pt=12, indent_mm=5),
-    "formula": BlockStyle(size_pt=15, centered=True, space_before_mm=3, space_after_mm=3),
-    "callout": BlockStyle(indent_mm=5, space_before_mm=2, space_after_mm=2.5, left_bar=True),
-    "quote": BlockStyle(size_pt=12, indent_mm=6, space_before_mm=2, left_bar=True),
-    "divider": BlockStyle(space_before_mm=4, space_after_mm=4),
-}
+from app.render.template import block_style, get_template
 
 PAGE_WIDTH, PAGE_HEIGHT = A4
-MARGIN_TOP_MM = 22
-MARGIN_BOTTOM_MM = 20
-MARGIN_LEFT_MM = 20
-MARGIN_RIGHT_MM = 18
-TITLE_SIZE_PT = 26
 
 
 def block_text(block) -> str:
@@ -75,39 +37,53 @@ def block_text(block) -> str:
     return block.text
 
 
-def style_for(block) -> BlockStyle:
-    if block.type == "heading":
-        return STYLES[f"heading_{block.level}"]
-    return STYLES[block.type]
-
-
-def marker_for(block, style: BlockStyle) -> str:
+def marker_for(block, style: dict) -> str:
     if block.type == "numbered":
         return f"{block.index}."
-    return style.marker
+    return style.get("marker", "")
 
 
 class PageRenderer:
-    def __init__(self, out_path: str, hw: HandwritingRenderer, paper: Paper, seed: int = 0):
+    def __init__(
+        self,
+        out_path: str,
+        hw: HandwritingRenderer,
+        paper: Paper,
+        template: dict,
+        seed: int = 0,
+    ):
         load_fonts()
         self.hw = hw
-        self.font_id = hw.font_id
+        self.paper = paper
+        self.template = template
         self.seed = seed
         self.line_counter = 0
-        self.paper = paper
         self.canvas = canvas.Canvas(out_path, pagesize=A4)
 
-        # On paper with a margin rule, text starts to the right of it.
-        self.left = MARGIN_LEFT_MM * mm
+        page = template["page"]
+        margins = page["margins_mm"]
+        self.page_left = margins["left"] * mm
+        self.right = PAGE_WIDTH - margins["right"] * mm
+        self.top = PAGE_HEIGHT - margins["top"] * mm
+        self.bottom = margins["bottom"] * mm + page["bottom_reserved_mm"] * mm
+
+        # A cue column pushes the body text right and gives headings a home.
+        self.cue = page["cue_column"]
+        if self.cue:
+            usable = self.right - self.page_left
+            self.cue_width = usable * self.cue["width_pct"] / 100.0
+            self.left = self.page_left + self.cue_width + self.cue["gap_mm"] * mm
+        else:
+            self.cue_width = 0.0
+            self.left = self.page_left
+
+        # Paper with a margin rule overrides the template's left margin.
         for rule in paper.rules:
-            if rule["type"] == "vertical":
-                self.left = rule["x_mm"] * mm + 4 * mm
+            if rule["type"] == "vertical" and not self.cue:
+                self.left = max(self.left, rule["x_mm"] * mm + 4 * mm)
 
-        self.right = PAGE_WIDTH - MARGIN_RIGHT_MM * mm
-        self.top = PAGE_HEIGHT - MARGIN_TOP_MM * mm
-        self.bottom = MARGIN_BOTTOM_MM * mm
         self.pitch = paper.line_pitch if paper.snap_leading else None
-
+        self.cue_floor = PAGE_HEIGHT  # lowest cue entry so far, to avoid overlap
         self.page_number = 1
         self.start_page()
         self.y = self.first_baseline()
@@ -115,21 +91,19 @@ class PageRenderer:
     # -- ruling arithmetic -------------------------------------------
 
     def first_baseline(self) -> float:
-        """Baseline of the first line on a page, snapped to a ruling if any."""
+        title_size = self.template["title"]["size_pt"]
         if not self.pitch:
-            return self.top - TITLE_SIZE_PT
-        limit = self.top - TITLE_SIZE_PT
+            return self.top - title_size
+        limit = self.top - title_size
         k = math.ceil((PAGE_HEIGHT - limit) / self.pitch)
         return PAGE_HEIGHT - k * self.pitch + self.paper.baseline_lift_pt
 
     def snap_leading(self, leading: float) -> float:
-        """Line spacing must be a whole number of rulings, at least one."""
         if not self.pitch:
             return leading
         return max(1, math.ceil(leading / self.pitch)) * self.pitch
 
     def snap_gap(self, gap: float) -> float:
-        """Gaps round to the nearest ruling -- small ones disappear entirely."""
         if not self.pitch:
             return gap
         return round(gap / self.pitch) * self.pitch
@@ -170,6 +144,22 @@ class PageRenderer:
 
     def start_page(self) -> None:
         draw_background(self.canvas, self.paper, PAGE_WIDTH, PAGE_HEIGHT)
+        self.draw_template_rules()
+        self.cue_floor = PAGE_HEIGHT
+
+    def draw_template_rules(self) -> None:
+        page = self.template["page"]
+        for rule in page["rules"]:
+            self.canvas.setStrokeColor(HexColor(rule["color"]))
+            self.canvas.setLineWidth(rule["width"])
+
+            if rule["type"] == "cue_divider" and self.cue:
+                x = self.left - self.cue["gap_mm"] * mm / 2
+                self.canvas.line(x, page["margins_mm"]["bottom"] * mm, x, self.top + 6 * mm)
+
+            elif rule["type"] == "summary_divider":
+                y = page["margins_mm"]["bottom"] * mm + page["bottom_reserved_mm"] * mm
+                self.canvas.line(self.page_left, y, self.right, y)
 
     def new_page(self) -> None:
         self.draw_page_number()
@@ -179,10 +169,14 @@ class PageRenderer:
         self.y = self.first_baseline()
 
     def draw_page_number(self) -> None:
-        self.canvas.setFont(self.font_id, 10)
+        if not self.template["page"]["page_numbers"]:
+            return
+        self.canvas.setFont(self.hw.font_id, 10)
         self.canvas.setFillGray(0.45)
         self.canvas.drawCentredString(
-            (self.left + self.right) / 2, self.bottom - 10 * mm, str(self.page_number)
+            (self.left + self.right) / 2,
+            self.template["page"]["margins_mm"]["bottom"] * mm - 10 * mm,
+            str(self.page_number),
         )
         self.canvas.setFillGray(0)
 
@@ -192,52 +186,89 @@ class PageRenderer:
     # -- drawing -----------------------------------------------------
 
     def draw_title(self, title: str) -> None:
-        self.hw.draw_run(self.canvas, title, self.left, self.y, TITLE_SIZE_PT, self.next_seed())
-        self.y -= self.snap_leading(TITLE_SIZE_PT * 1.3) + self.snap_gap(4 * mm)
+        style = self.template["title"]
+        size = style["size_pt"]
+        x = self.page_left if self.cue else self.left
+        width = self.hw.draw_run(self.canvas, title, x, self.y, size, self.next_seed())
+        if style["underline"]:
+            self.canvas.setStrokeColor(HexColor(self.hw.style.ink))
+            self.canvas.setLineWidth(0.8)
+            self.canvas.line(x, self.y - 4, x + width, self.y - 4)
+        self.y -= self.snap_leading(size * style["leading_mult"])
+        self.y -= self.snap_gap(style["space_after_mm"] * mm)
 
-    def draw_divider(self, style: BlockStyle) -> None:
-        self.y -= self.snap_gap(style.space_before_mm * mm)
+    def draw_divider(self, style: dict) -> None:
+        self.y -= self.snap_gap(style.get("space_before_mm", 0) * mm)
         if self.space_left() < 6 * mm:
             self.new_page()
-        self.canvas.setStrokeGray(0.65)
+        self.canvas.setStrokeColor(HexColor(self.template["ink"]["rule"]))
         self.canvas.setLineWidth(0.7)
         mid = (self.left + self.right) / 2
         self.canvas.line(mid - 20 * mm, self.y, mid + 20 * mm, self.y)
-        self.y -= self.snap_gap(style.space_after_mm * mm)
+        self.y -= self.snap_gap(style.get("space_after_mm", 0) * mm)
 
-    def draw_left_bar(self, style: BlockStyle, block_top: float) -> None:
-        if not style.left_bar:
+    def draw_left_bar(self, style: dict, block_top: float) -> None:
+        if not style.get("left_bar"):
             return
-        x = self.left + style.indent_mm * mm - 3 * mm
-        self.canvas.setStrokeGray(0.55)
+        x = self.left + style.get("indent_mm", 0) * mm - 3 * mm
+        self.canvas.setStrokeColor(HexColor(self.template["ink"]["accent"]))
         self.canvas.setLineWidth(1.2)
         self.canvas.line(x, block_top + 2, x, self.y + 4)
 
+    def ink_for(self, style: dict) -> str:
+        return self.template["ink"]["accent"] if style.get("accent") else self.hw.style.ink
+
+    def draw_cue_heading(self, block, style: dict) -> None:
+        """Cornell: headings live in the left cue column, beside the body text."""
+        size = style["size_pt"]
+        leading = self.snap_leading(size * style["leading_mult"])
+        lines = self.wrap(block_text(block), size, self.cue_width)
+
+        top = min(self.y, self.cue_floor - leading)
+        if top - leading * len(lines) < self.bottom:
+            self.new_page()
+            top = self.y
+
+        y = top
+        for line in lines:
+            self.hw.draw_run(self.canvas, line, self.page_left, y, size, self.next_seed())
+            y -= leading
+
+        self.cue_floor = y
+        # The body does not move down for a cue heading; it only starts at or
+        # below the heading's first line, which is what puts them side by side.
+        self.y = min(self.y, top)
+
     def draw_block(self, block) -> None:
-        style = style_for(block)
+        style = block_style(self.template, block)
 
         if block.type == "divider":
             self.draw_divider(style)
             return
 
+        if self.cue and block.type == "heading":
+            self.draw_cue_heading(block, style)
+            return
+
         text = block_text(block)
         marker = marker_for(block, style)
-        leading = self.snap_leading(style.size_pt * style.leading_mult)
+        size = style["size_pt"]
+        leading = self.snap_leading(size * style["leading_mult"])
 
         # Hanging indent: the marker sits at `marker_x`, and every line of text
         # -- first and continuation alike -- starts at `text_x`.
-        marker_x = self.left + style.indent_mm * mm
-        text_x = marker_x + style.hanging_indent_mm * mm
-        lines = self.wrap(text, style.size_pt, self.right - text_x)
+        marker_x = self.left + style.get("indent_mm", 0) * mm
+        text_x = marker_x + style.get("hanging_indent_mm", 0) * mm
+        lines = self.wrap(text, size, self.right - text_x)
         if not lines:
             return
 
-        self.y -= self.snap_gap(style.space_before_mm * mm)
+        self.y -= self.snap_gap(style.get("space_before_mm", 0) * mm)
 
         # Widow/orphan control: never strand a heading, or the first line of a
         # multi-line block, at the bottom of a page.
-        body = STYLES["paragraph"]
-        body_leading = self.snap_leading(body.size_pt * body.leading_mult)
+        body = self.template["blocks"]["paragraph"]
+        body_leading = self.snap_leading(body["size_pt"] * body["leading_mult"])
         if block.type == "heading":
             needed = leading * len(lines) + body_leading * 2
         elif len(lines) == 1:
@@ -248,6 +279,7 @@ class PageRenderer:
             self.new_page()
 
         block_top = self.y
+        ink = self.ink_for(style)
 
         for i, line in enumerate(lines):
             if self.space_left() < leading:
@@ -256,25 +288,23 @@ class PageRenderer:
                 block_top = self.y
 
             if i == 0 and marker:
-                self.hw.draw_run(self.canvas, marker, marker_x, self.y, style.size_pt, self.next_seed())
+                self.hw.draw_run(self.canvas, marker, marker_x, self.y, size, self.next_seed(), ink)
 
-            if style.centered:
-                width = self.measure(line, style.size_pt)
-                line_x = (self.left + self.right) / 2 - width / 2
+            if style.get("centered"):
+                line_x = (self.left + self.right) / 2 - self.measure(line, size) / 2
             else:
                 line_x = text_x
-            self.hw.draw_run(self.canvas, line, line_x, self.y, style.size_pt, self.next_seed())
+            width = self.hw.draw_run(self.canvas, line, line_x, self.y, size, self.next_seed(), ink)
 
-            if style.underline and i == len(lines) - 1:
-                width = self.measure(line, style.size_pt)
-                self.canvas.setStrokeColor(HexColor(self.hw.style.ink))
+            if style.get("underline") and i == len(lines) - 1:
+                self.canvas.setStrokeColor(HexColor(ink))
                 self.canvas.setLineWidth(0.6)
-                self.canvas.line(text_x, self.y - 3, text_x + width, self.y - 3)
+                self.canvas.line(line_x, self.y - 3, line_x + width, self.y - 3)
 
             self.y -= leading
 
         self.draw_left_bar(style, block_top)
-        self.y -= self.snap_gap(style.space_after_mm * mm)
+        self.y -= self.snap_gap(style.get("space_after_mm", 0) * mm)
 
     def render(self, note: Note) -> None:
         self.draw_title(note.title)
@@ -289,8 +319,15 @@ def render_note(
     out_path: str,
     style_id: str = "patrick_hand",
     paper_id: str = "plain",
+    template_id: str = "lecture",
     seed: int = 0,
 ) -> int:
-    renderer = PageRenderer(out_path, get_renderer(style_id), get_paper(paper_id), seed)
+    renderer = PageRenderer(
+        out_path,
+        get_renderer(style_id),
+        get_paper(paper_id),
+        get_template(template_id),
+        seed,
+    )
     renderer.render(note)
     return renderer.page_number

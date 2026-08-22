@@ -1,0 +1,15 @@
+{
+  "id": "lecture",
+  "name": "Lecture Notes",
+  "page": {
+    "margins_mm": { "top": 20, "bottom": 20, "left": 22, "right": 16 }
+  },
+  "title": { "size_pt": 27, "underline": true, "space_after_mm": 5 },
+  "blocks": {
+    "heading_1": { "size_pt": 19, "space_before_mm": 6 },
+    "heading_2": { "size_pt": 16, "underline": true, "space_before_mm": 4.5 },
+    "bullet": { "indent_mm": 7, "hanging_indent_mm": 5, "space_after_mm": 1.2 },
+    "numbered": { "indent_mm": 7, "hanging_indent_mm": 6, "space_after_mm": 1.2 },
+    "definition": { "indent_mm": 5, "hanging_indent_mm": 5 }
+  }
+}

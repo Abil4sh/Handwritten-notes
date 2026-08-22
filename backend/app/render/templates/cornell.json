@@ -1,0 +1,21 @@
+{
+  "id": "cornell",
+  "name": "Cornell Notes",
+  "page": {
+    "margins_mm": { "top": 22, "bottom": 20, "left": 16, "right": 15 },
+    "cue_column": { "width_pct": 28, "gap_mm": 7 },
+    "bottom_reserved_mm": 42,
+    "rules": [
+      { "type": "cue_divider", "color": "#c0453c", "width": 0.7 },
+      { "type": "summary_divider", "color": "#c0453c", "width": 0.7 }
+    ]
+  },
+  "title": { "size_pt": 24, "space_after_mm": 5 },
+  "blocks": {
+    "heading_1": { "size_pt": 15, "underline": false, "space_before_mm": 5, "space_after_mm": 1.5 },
+    "heading_2": { "size_pt": 13, "space_before_mm": 4, "space_after_mm": 1.5 },
+    "heading_3": { "size_pt": 12, "space_before_mm": 3 },
+    "bullet": { "indent_mm": 4, "hanging_indent_mm": 4.5 },
+    "numbered": { "indent_mm": 4, "hanging_indent_mm": 5.5 }
+  }
+}

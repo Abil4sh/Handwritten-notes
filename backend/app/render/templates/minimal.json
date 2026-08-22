@@ -1,0 +1,16 @@
+{
+  "id": "minimal",
+  "name": "Minimal Notes",
+  "page": {
+    "margins_mm": { "top": 26, "bottom": 24, "left": 26, "right": 24 },
+    "page_numbers": false
+  },
+  "title": { "size_pt": 24, "space_after_mm": 7 },
+  "blocks": {
+    "heading_1": { "size_pt": 17, "underline": false, "space_before_mm": 8, "space_after_mm": 3 },
+    "heading_2": { "size_pt": 15, "space_before_mm": 6 },
+    "paragraph": { "leading_mult": 1.6, "space_after_mm": 3.5 },
+    "bullet": { "leading_mult": 1.6, "space_after_mm": 2.5 },
+    "numbered": { "leading_mult": 1.6, "space_after_mm": 2.5 }
+  }
+}

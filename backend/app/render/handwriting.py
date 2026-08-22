@@ -61,7 +61,9 @@ class HandwritingRenderer(Protocol):
     def measure(self, text: str, size_pt: float) -> float:
         """Width of `text` in points, as it will actually be drawn."""
 
-    def draw_run(self, canvas, text: str, x: float, y: float, size_pt: float, seed: int) -> float:
+    def draw_run(
+        self, canvas, text: str, x: float, y: float, size_pt: float, seed: int, ink: str | None = None
+    ) -> float:
         """Draw `text` with its baseline starting at (x, y). Returns width drawn."""
 
 
@@ -96,14 +98,16 @@ class FontGlyphRenderer:
             return parts
         return list(text)
 
-    def draw_run(self, canvas, text: str, x: float, y: float, size_pt: float, seed: int) -> float:
+    def draw_run(
+        self, canvas, text: str, x: float, y: float, size_pt: float, seed: int, ink: str | None = None
+    ) -> float:
         if not text:
             return 0.0
 
         rng = random.Random(seed)
         size = self.size(size_pt)
         canvas.setFont(self.font_id, size)
-        canvas.setFillColor(HexColor(self.style.ink))
+        canvas.setFillColor(HexColor(ink or self.style.ink))
 
         # One slope for the whole line: real handwriting drifts, it does not
         # wobble randomly around a perfect horizontal.
