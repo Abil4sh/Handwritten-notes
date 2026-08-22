@@ -1,0 +1,18 @@
+{
+  "id": "caveat",
+  "name": "Caveat",
+  "font_id": "caveat",
+  "size_multiplier": 1.12,
+  "ink": "#22304d",
+  "jitter": {
+    "unit": "glyph",
+    "baseline_sigma_pt": 0.55,
+    "rotation_sigma_deg": 1.1,
+    "size_sigma_pct": 2.0,
+    "letter_space_sigma_pt": 0.35,
+    "word_space_sigma_pt": 0.9,
+    "line_start_sigma_pt": 1.2,
+    "line_slope_sigma_deg": 0.3,
+    "word_space_bias_pt": 0.8
+  }
+}

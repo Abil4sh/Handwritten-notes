@@ -1,0 +1,18 @@
+{
+  "id": "indie_flower",
+  "name": "Indie Flower",
+  "font_id": "indie_flower",
+  "size_multiplier": 0.95,
+  "ink": "#26303c",
+  "jitter": {
+    "unit": "glyph",
+    "baseline_sigma_pt": 0.5,
+    "rotation_sigma_deg": 1.0,
+    "size_sigma_pct": 1.9,
+    "letter_space_sigma_pt": 0.32,
+    "word_space_sigma_pt": 0.85,
+    "line_start_sigma_pt": 1.15,
+    "line_slope_sigma_deg": 0.26,
+    "word_space_bias_pt": 0.8
+  }
+}

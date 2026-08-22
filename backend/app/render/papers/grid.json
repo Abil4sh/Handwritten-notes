@@ -1,0 +1,10 @@
+{
+  "id": "grid",
+  "name": "Grid",
+  "background": "#fdfcf9",
+  "rules": [
+    { "type": "grid", "pitch_mm": 5.0, "color": "#d8dfe6", "width": 0.4 }
+  ],
+  "snap_leading": false,
+  "baseline_lift_pt": 0
+}

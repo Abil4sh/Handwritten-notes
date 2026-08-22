@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "title": "Binary Search",
+  "blocks": [
+    { "id": "b01", "type": "heading", "level": 1, "text": "Definition" },
+    { "id": "b02", "type": "paragraph", "text": "Binary search is a searching algorithm that finds the position of a target value within a sorted array by repeatedly halving the search interval." },
+    { "id": "b03", "type": "definition", "term": "Invariant", "text": "A condition that holds true before and after every iteration of the loop." },
+
+    { "id": "b04", "type": "heading", "level": 1, "text": "How it works" },
+    { "id": "b05", "type": "numbered", "index": 1, "depth": 0, "text": "Find the middle element of the current interval." },
+    { "id": "b06", "type": "numbered", "index": 2, "depth": 0, "text": "Compare it with the target value." },
+    { "id": "b07", "type": "numbered", "index": 3, "depth": 0, "text": "If the target is smaller, search the left half; otherwise search the right half." },
+    { "id": "b08", "type": "numbered", "index": 4, "depth": 0, "text": "Repeat until the interval is empty or the target is found." },
+
+    { "id": "b09", "type": "heading", "level": 2, "text": "Preconditions" },
+    { "id": "b10", "type": "bullet", "depth": 0, "text": "The array must be sorted." },
+    { "id": "b11", "type": "bullet", "depth": 0, "text": "Random access to elements must be possible." },
+    { "id": "b12", "type": "bullet", "depth": 1, "text": "Works on arrays and lists, not on linked lists." },
+
+    { "id": "b13", "type": "callout", "variant": "warning", "text": "Binary search on an unsorted array silently returns wrong answers rather than failing." },
+
+    { "id": "b14", "type": "heading", "level": 1, "text": "Complexity" },
+    { "id": "b15", "type": "formula", "text": "O(log n)", "notation": "plain" },
+    { "id": "b16", "type": "paragraph", "text": "Each comparison eliminates half of the remaining elements, so the number of steps grows logarithmically with the size of the input." },
+    { "id": "b17", "type": "example", "text": "Searching a sorted array of 1,000,000 elements takes at most 20 comparisons." },
+
+    { "id": "b18", "type": "divider" },
+
+    { "id": "b19", "type": "heading", "level": 2, "text": "Common mistake" },
+    { "id": "b20", "type": "paragraph", "text": "Computing the midpoint as (low + high) / 2 can overflow for large indices. Use low + (high - low) / 2 instead." },
+    { "id": "b21", "type": "callout", "variant": "key", "text": "The midpoint overflow bug existed in the Java standard library for nine years." },
+    { "id": "b22", "type": "quote", "text": "Although the basic idea is simple, the details can be surprisingly tricky.", "attribution": "Donald Knuth" }
+  ]
+}

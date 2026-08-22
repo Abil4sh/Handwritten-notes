@@ -1,0 +1,18 @@
+{
+  "id": "kalam",
+  "name": "Kalam",
+  "font_id": "kalam",
+  "size_multiplier": 0.92,
+  "ink": "#232323",
+  "jitter": {
+    "unit": "glyph",
+    "baseline_sigma_pt": 0.5,
+    "rotation_sigma_deg": 1.0,
+    "size_sigma_pct": 1.8,
+    "letter_space_sigma_pt": 0.3,
+    "word_space_sigma_pt": 0.8,
+    "line_start_sigma_pt": 1.1,
+    "line_slope_sigma_deg": 0.28,
+    "word_space_bias_pt": 0.8
+  }
+}

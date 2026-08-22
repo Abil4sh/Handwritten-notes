@@ -1,0 +1,486 @@
+{
+ "schema_version": 1,
+ "title": "Operating Systems: Scheduling",
+ "blocks": [
+  {
+   "id": "h1",
+   "type": "heading",
+   "level": 1,
+   "text": "Process Scheduling"
+  },
+  {
+   "id": "p2",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b3",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b4",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b5",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p6",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b7",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b8",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b9",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p10",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b11",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b12",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b13",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for process scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "f14",
+   "type": "formula",
+   "text": "turnaround = completion - arrival"
+  },
+  {
+   "id": "h15",
+   "type": "heading",
+   "level": 1,
+   "text": "Round Robin"
+  },
+  {
+   "id": "p16",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b17",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b18",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b19",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p20",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b21",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b22",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b23",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p24",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b25",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b26",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b27",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for round robin, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "f28",
+   "type": "formula",
+   "text": "turnaround = completion - arrival"
+  },
+  {
+   "id": "h29",
+   "type": "heading",
+   "level": 1,
+   "text": "Priority Scheduling"
+  },
+  {
+   "id": "p30",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b31",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b32",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b33",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p34",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b35",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b36",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b37",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p38",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b39",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b40",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b41",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for priority scheduling, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "f42",
+   "type": "formula",
+   "text": "turnaround = completion - arrival"
+  },
+  {
+   "id": "h43",
+   "type": "heading",
+   "level": 1,
+   "text": "Multilevel Queues"
+  },
+  {
+   "id": "p44",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b45",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b46",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b47",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p48",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b49",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b50",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b51",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p52",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b53",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b54",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b55",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for multilevel queues, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "f56",
+   "type": "formula",
+   "text": "turnaround = completion - arrival"
+  },
+  {
+   "id": "h57",
+   "type": "heading",
+   "level": 1,
+   "text": "Starvation"
+  },
+  {
+   "id": "p58",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b59",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b60",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b61",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p62",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b63",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b64",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b65",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p66",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b67",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b68",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b69",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for starvation, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "f70",
+   "type": "formula",
+   "text": "turnaround = completion - arrival"
+  },
+  {
+   "id": "h71",
+   "type": "heading",
+   "level": 1,
+   "text": "Context Switching"
+  },
+  {
+   "id": "p72",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b73",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b74",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b75",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p76",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b77",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b78",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b79",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "p80",
+   "type": "paragraph",
+   "text": "The scheduler decides which process runs next and for how long. This decision affects throughput, turnaround time, waiting time and response time, and different algorithms optimise different metrics. A long paragraph like this one exists to force line wrapping and page breaks so that pagination can be verified properly."
+  },
+  {
+   "id": "b81",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 1 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b82",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 2 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "b83",
+   "type": "bullet",
+   "depth": 0,
+   "text": "Consideration number 3 for context switching, written long enough to wrap onto a second line in most handwriting fonts."
+  },
+  {
+   "id": "f84",
+   "type": "formula",
+   "text": "turnaround = completion - arrival"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ruled",
+  "name": "Ruled",
+  "background": "#fdfcf7",
+  "rules": [
+    { "type": "horizontal", "pitch_mm": 8.0, "color": "#c3d2e6", "width": 0.55 },
+    { "type": "vertical", "x_mm": 28.0, "color": "#e3bdb8", "width": 0.8 }
+  ],
+  "snap_leading": true,
+  "baseline_lift_pt": 2.5
+}

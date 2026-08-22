@@ -1,0 +1,18 @@
+{
+  "id": "patrick_hand",
+  "name": "Patrick Hand",
+  "font_id": "patrick_hand",
+  "size_multiplier": 1.0,
+  "ink": "#1e2a3a",
+  "jitter": {
+    "unit": "glyph",
+    "baseline_sigma_pt": 0.45,
+    "rotation_sigma_deg": 0.9,
+    "size_sigma_pct": 1.8,
+    "letter_space_sigma_pt": 0.3,
+    "word_space_sigma_pt": 0.8,
+    "line_start_sigma_pt": 1.1,
+    "line_slope_sigma_deg": 0.25,
+    "word_space_bias_pt": 0.8
+  }
+}

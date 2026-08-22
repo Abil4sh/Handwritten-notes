@@ -1,0 +1,18 @@
+{
+  "id": "dancing_script",
+  "name": "Dancing Script",
+  "font_id": "dancing_script",
+  "size_multiplier": 1.08,
+  "ink": "#1f2d4a",
+  "jitter": {
+    "unit": "word",
+    "baseline_sigma_pt": 0.5,
+    "rotation_sigma_deg": 0.8,
+    "size_sigma_pct": 1.5,
+    "letter_space_sigma_pt": 0.0,
+    "word_space_sigma_pt": 0.9,
+    "line_start_sigma_pt": 1.2,
+    "line_slope_sigma_deg": 0.28,
+    "word_space_bias_pt": 0.8
+  }
+}
