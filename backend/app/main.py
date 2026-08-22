@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import notes, options, render
+from app.api import me, notes, options, render
 from app.render.fonts import load_fonts
 
 API_PREFIX = "/api/v1"
@@ -33,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(me.router, prefix=API_PREFIX)
 app.include_router(notes.router, prefix=API_PREFIX)
 app.include_router(options.router, prefix=API_PREFIX)
 app.include_router(render.router, prefix=API_PREFIX)
