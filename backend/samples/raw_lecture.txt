@@ -1,0 +1,24 @@
+Process Scheduling
+
+# What is scheduling
+The scheduler decides which process runs next and for how long.
+This affects throughput, waiting time and response time.
+
+Preemptive: the scheduler can interrupt a running process.
+
+## Common algorithms
+1. First Come First Served
+2. Shortest Job First
+3. Round Robin
+   - each process gets a fixed time slice
+   - simple and fair
+4. Priority Scheduling
+
+Key metrics:
+turnaround = completion - arrival
+
+Warning: priority scheduling can cause starvation.
+
+e.g. a low priority job may wait forever under constant high priority load
+
+> Scheduling is the art of deciding who waits.
