@@ -1,0 +1,8 @@
+annotated-types==0.8.0
+charset-normalizer==3.5.1
+pillow==12.3.0
+pydantic==2.13.4
+pydantic-core==2.46.4
+reportlab==5.0.1
+typing-extensions==4.16.0
+typing-inspection==0.4.4

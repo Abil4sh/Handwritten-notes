@@ -1,0 +1,9 @@
+This project bundles the following fonts from the Google Fonts project
+(https://github.com/google/fonts). Each is used unmodified under its own license.
+
+Caveat — OFL-1.1 — licenses/caveat-OFL.txt — https://github.com/google/fonts/tree/main/ofl/caveat
+Patrick Hand — OFL-1.1 — licenses/patrick_hand-OFL.txt — https://github.com/google/fonts/tree/main/ofl/patrickhand
+Kalam — OFL-1.1 — licenses/kalam-OFL.txt — https://github.com/google/fonts/tree/main/ofl/kalam
+Shadows Into Light — OFL-1.1 — licenses/shadows_into_light-OFL.txt — https://github.com/google/fonts/tree/main/ofl/shadowsintolight
+Dancing Script — OFL-1.1 — licenses/dancing_script-OFL.txt — https://github.com/google/fonts/tree/main/ofl/dancingscript
+Indie Flower — OFL-1.1 — licenses/indie_flower-OFL.txt — https://github.com/google/fonts/tree/main/ofl/indieflower

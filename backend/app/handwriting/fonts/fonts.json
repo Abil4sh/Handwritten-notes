@@ -1,0 +1,53 @@
+{
+  "source": "https://github.com/google/fonts",
+  "fonts": [
+    {
+      "id": "caveat",
+      "family": "Caveat",
+      "repo_dir": "ofl/caveat",
+      "file": "Caveat[wght].ttf",
+      "license": "OFL-1.1",
+      "script_type": "print"
+    },
+    {
+      "id": "patrick_hand",
+      "family": "Patrick Hand",
+      "repo_dir": "ofl/patrickhand",
+      "file": "PatrickHand-Regular.ttf",
+      "license": "OFL-1.1",
+      "script_type": "print"
+    },
+    {
+      "id": "kalam",
+      "family": "Kalam",
+      "repo_dir": "ofl/kalam",
+      "file": "Kalam-Regular.ttf",
+      "license": "OFL-1.1",
+      "script_type": "print"
+    },
+    {
+      "id": "shadows_into_light",
+      "family": "Shadows Into Light",
+      "repo_dir": "ofl/shadowsintolight",
+      "file": "ShadowsIntoLight.ttf",
+      "license": "OFL-1.1",
+      "script_type": "print"
+    },
+    {
+      "id": "dancing_script",
+      "family": "Dancing Script",
+      "repo_dir": "ofl/dancingscript",
+      "file": "DancingScript[wght].ttf",
+      "license": "OFL-1.1",
+      "script_type": "connected"
+    },
+    {
+      "id": "indie_flower",
+      "family": "Indie Flower",
+      "repo_dir": "ofl/indieflower",
+      "file": "IndieFlower-Regular.ttf",
+      "license": "OFL-1.1",
+      "script_type": "print"
+    }
+  ]
+}
