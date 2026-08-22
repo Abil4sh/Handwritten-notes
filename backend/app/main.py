@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api import me, notes, options, render
 from app.render.fonts import load_fonts
@@ -42,3 +43,7 @@ app.include_router(render.router, prefix=API_PREFIX)
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
+
+# Mounted last so it does not shadow the API routes above.
+app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
