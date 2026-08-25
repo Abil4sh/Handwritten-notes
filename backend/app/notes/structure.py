@@ -60,6 +60,45 @@ def depth_of(indent: str) -> int:
     return min(2, len(spaces) // 2)
 
 
+MARK_PATTERN = re.compile(r"==(?:([gbpo]):)?(.+?)==")
+
+MARK_COLORS = {"g": "green", "b": "blue", "p": "pink", "o": "orange", None: "yellow"}
+
+
+def extract_marks(text: str) -> tuple[str, list[dict]]:
+    """Strip ==highlight== syntax, returning clean text plus offset marks.
+
+    ==text==     yellow (default)
+    ==g:text==   green,  ==b:== blue,  ==p:== pink,  ==o:== orange
+
+    Offsets are computed against the CLEANED string, so they stay valid after
+    the delimiters are removed.
+    """
+    marks: list[dict] = []
+    out: list[str] = []
+    cursor = 0
+    position = 0
+
+    for match in MARK_PATTERN.finditer(text):
+        out.append(text[cursor : match.start()])
+        position += match.start() - cursor
+        inner = match.group(2)
+        marks.append(
+            {
+                "start": position,
+                "end": position + len(inner),
+                "kind": "highlight",
+                "color": MARK_COLORS[match.group(1)],
+            }
+        )
+        out.append(inner)
+        position += len(inner)
+        cursor = match.end()
+
+    out.append(text[cursor:])
+    return "".join(out), marks
+
+
 class BlockBuilder:
     def __init__(self):
         self.blocks: list[dict] = []
@@ -76,11 +115,20 @@ class BlockBuilder:
             return
         text = " ".join(self.paragraph).strip()
         self.paragraph = []
-        if text:
-            self.blocks.append({"id": self.next_id(), "type": "paragraph", "text": text})
+        if not text:
+            return
+        text, marks = extract_marks(text)
+        block = {"id": self.next_id(), "type": "paragraph", "text": text}
+        if marks:
+            block["marks"] = marks
+        self.blocks.append(block)
 
     def add(self, **block) -> None:
         self.flush()
+        if "text" in block:
+            block["text"], marks = extract_marks(block["text"])
+            if marks:
+                block["marks"] = marks
         self.blocks.append({"id": self.next_id(), **block})
 
     def buffer(self, line: str) -> None:

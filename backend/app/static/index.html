@@ -168,6 +168,10 @@ cat > app/static/index.html << 'HTMLEOF'
       <div class="group"><div class="label">Template</div><div class="chips" id="templates"></div></div>
       <div class="group"><div class="label">Handwriting</div><div class="chips" id="styles"></div></div>
       <div class="group"><div class="label">Paper</div><div class="chips" id="papers"></div></div>
+      <div class="group">
+        <div class="label">Size <span id="sizeVal" style="text-transform:none;letter-spacing:0">100%</span></div>
+        <input type="range" id="sizeSlider" min="70" max="170" step="5" value="100" style="width:220px">
+      </div>
       <div class="row">
         <button class="btn" id="go">Generate</button>
         <button class="btn ghost" id="save" style="display:none">Save</button>
@@ -205,7 +209,7 @@ cat > app/static/index.html << 'HTMLEOF'
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const API = "/api/v1";
-const chosen = { template_id: null, style_id: null, paper_id: null };
+const chosen = { template_id: null, style_id: null, paper_id: null, scale: 1.0 };
 let supa = null, session = null, currentNoteId = null, objectUrl = null, mode = "signin";
 
 const $ = id => document.getElementById(id);
@@ -484,6 +488,13 @@ $("raw").addEventListener("input", scheduleRender);
       generate();
     }
   });
+});
+
+$("sizeSlider").addEventListener("input", e => {
+  chosen.scale = e.target.value / 100;
+  $("sizeVal").textContent = e.target.value + "%";
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(generate, 250);
 });
 
 $("go").onclick = generate;

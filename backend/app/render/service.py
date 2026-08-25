@@ -18,6 +18,7 @@ class RenderSpec:
     style_id: str = "patrick_hand"
     paper_id: str = "plain"
     seed: int = 0
+    scale: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -43,5 +44,6 @@ def render_to_bytes(note: Note, spec: RenderSpec) -> RenderResult:
             paper_id=spec.paper_id,
             template_id=spec.template_id,
             seed=spec.seed,
+            scale=spec.scale,
         )
         return RenderResult(pdf=path.read_bytes(), page_count=pages)

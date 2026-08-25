@@ -11,8 +11,23 @@ from pydantic import BaseModel, Field
 SCHEMA_VERSION = 1
 
 
+class Mark(BaseModel):
+    """An inline span to emphasise, as character offsets into the block text.
+
+    Offsets rather than nested rich text: layout works on plain strings, so
+    keeping marks alongside the text avoids threading a tree through the
+    line breaker.
+    """
+
+    start: int = Field(ge=0)
+    end: int = Field(gt=0)
+    kind: Literal["highlight", "underline"] = "highlight"
+    color: Literal["yellow", "green", "blue", "pink", "orange"] = "yellow"
+
+
 class BaseBlock(BaseModel):
     id: str = Field(min_length=1)
+    marks: list[Mark] = Field(default_factory=list)
 
 
 class HeadingBlock(BaseBlock):

@@ -8,6 +8,7 @@ template would mean editing the renderer.
 """
 
 import math
+import random
 
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
@@ -19,6 +20,14 @@ from app.render.fonts import load_fonts
 from app.render.handwriting import HandwritingRenderer, get_renderer
 from app.render.paper import Paper, draw_background, get_paper
 from app.render.template import block_style, get_template
+
+HIGHLIGHT_COLORS = {
+    "yellow": "#f5e06a",
+    "green": "#a8dc8c",
+    "blue": "#96c9ec",
+    "pink": "#f0a8c0",
+    "orange": "#f5bb78",
+}
 
 PAGE_WIDTH, PAGE_HEIGHT = A4
 
@@ -51,6 +60,7 @@ class PageRenderer:
         paper: Paper,
         template: dict,
         seed: int = 0,
+        scale: float = 1.0,
     ):
         load_fonts()
         self.hw = hw
@@ -82,16 +92,21 @@ class PageRenderer:
             if rule["type"] == "vertical" and not self.cue:
                 self.left = max(self.left, rule["x_mm"] * mm + 4 * mm)
 
+        self.scale = scale
         self.pitch = paper.line_pitch if paper.snap_leading else None
         self.cue_floor = PAGE_HEIGHT  # lowest cue entry so far, to avoid overlap
         self.page_number = 1
         self.start_page()
         self.y = self.first_baseline()
 
+    def sized(self, size_pt: float) -> float:
+        """Every point size passes through here, so one slider scales the lot."""
+        return size_pt * self.scale
+
     # -- ruling arithmetic -------------------------------------------
 
     def first_baseline(self) -> float:
-        title_size = self.template["title"]["size_pt"]
+        title_size = self.sized(self.template["title"]["size_pt"])
         if not self.pitch:
             return self.top - title_size
         limit = self.top - title_size
@@ -187,7 +202,7 @@ class PageRenderer:
 
     def draw_title(self, title: str) -> None:
         style = self.template["title"]
-        size = style["size_pt"]
+        size = self.sized(style["size_pt"])
         x = self.page_left if self.cue else self.left
         width = self.hw.draw_run(self.canvas, title, x, self.y, size, self.next_seed())
         if style["underline"]:
@@ -220,7 +235,7 @@ class PageRenderer:
 
     def draw_cue_heading(self, block, style: dict) -> None:
         """Cornell: headings live in the left cue column, beside the body text."""
-        size = style["size_pt"]
+        size = self.sized(style["size_pt"])
         leading = self.snap_leading(size * style["leading_mult"])
         lines = self.wrap(block_text(block), size, self.cue_width)
 
@@ -239,6 +254,46 @@ class PageRenderer:
         # below the heading's first line, which is what puts them side by side.
         self.y = min(self.y, top)
 
+    def draw_highlights(self, line: str, offset: int, x: float, size: float, marks) -> None:
+        """Marker strokes behind a line, drawn before the text so ink sits on top.
+
+        A real highlighter overshoots the words and does not stop cleanly, so
+        each band is nudged and extended slightly.
+        """
+        line_start, line_end = offset, offset + len(line)
+
+        for mark in marks:
+            start = max(mark.start, line_start)
+            end = min(mark.end, line_end)
+            if start >= end:
+                continue
+
+            before = line[: start - line_start]
+            inside = line[start - line_start : end - line_start]
+            x0 = x + self.measure(before, size)
+            width = self.measure(inside, size)
+
+            rng = random.Random(self.seed * 7919 + offset + mark.start)
+            colour = HIGHLIGHT_COLORS[mark.color]
+
+            if mark.kind == "underline":
+                self.canvas.setStrokeColor(HexColor(colour))
+                self.canvas.setLineWidth(1.6)
+                y = self.y - size * 0.22 + rng.uniform(-0.6, 0.6)
+                self.canvas.line(x0, y, x0 + width + rng.uniform(0, 2), y)
+                continue
+
+            self.canvas.setFillColor(HexColor(colour), alpha=0.42)
+            self.canvas.rect(
+                x0 - 1.2 + rng.uniform(-0.8, 0.8),
+                self.y - size * 0.26 + rng.uniform(-0.7, 0.7),
+                width + 2.6 + rng.uniform(-0.5, 1.6),
+                size * 1.02 + rng.uniform(-0.6, 0.9),
+                stroke=0,
+                fill=1,
+            )
+            self.canvas.setFillAlpha(1)
+
     def draw_block(self, block) -> None:
         style = block_style(self.template, block)
 
@@ -252,7 +307,7 @@ class PageRenderer:
 
         text = block_text(block)
         marker = marker_for(block, style)
-        size = style["size_pt"]
+        size = self.sized(style["size_pt"])
         leading = self.snap_leading(size * style["leading_mult"])
 
         # Hanging indent: the marker sits at `marker_x`, and every line of text
@@ -268,7 +323,7 @@ class PageRenderer:
         # Widow/orphan control: never strand a heading, or the first line of a
         # multi-line block, at the bottom of a page.
         body = self.template["blocks"]["paragraph"]
-        body_leading = self.snap_leading(body["size_pt"] * body["leading_mult"])
+        body_leading = self.snap_leading(self.sized(body["size_pt"]) * body["leading_mult"])
         if block.type == "heading":
             needed = leading * len(lines) + body_leading * 2
         elif len(lines) == 1:
@@ -280,6 +335,8 @@ class PageRenderer:
 
         block_top = self.y
         ink = self.ink_for(style)
+        marks = getattr(block, "marks", [])
+        offset = 0
 
         for i, line in enumerate(lines):
             if self.space_left() < leading:
@@ -294,6 +351,9 @@ class PageRenderer:
                 line_x = (self.left + self.right) / 2 - self.measure(line, size) / 2
             else:
                 line_x = text_x
+
+            if marks:
+                self.draw_highlights(line, offset, line_x, size, marks)
             width = self.hw.draw_run(self.canvas, line, line_x, self.y, size, self.next_seed(), ink)
 
             if style.get("underline") and i == len(lines) - 1:
@@ -301,6 +361,8 @@ class PageRenderer:
                 self.canvas.setLineWidth(0.6)
                 self.canvas.line(line_x, self.y - 3, line_x + width, self.y - 3)
 
+            # +1 for the space the wrapper consumed between lines
+            offset += len(line) + 1
             self.y -= leading
 
         self.draw_left_bar(style, block_top)
@@ -321,6 +383,7 @@ def render_note(
     paper_id: str = "plain",
     template_id: str = "lecture",
     seed: int = 0,
+    scale: float = 1.0,
 ) -> int:
     renderer = PageRenderer(
         out_path,
@@ -328,6 +391,7 @@ def render_note(
         get_paper(paper_id),
         get_template(template_id),
         seed,
+        scale,
     )
     renderer.render(note)
     return renderer.page_number

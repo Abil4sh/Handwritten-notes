@@ -22,6 +22,7 @@ class CreateRenderRequest(BaseModel):
     template_id: str = "lecture"
     style_id: str = "patrick_hand"
     paper_id: str = "plain"
+    scale: float = 1.0
 
 
 def validate(request: CreateRenderRequest) -> dict:

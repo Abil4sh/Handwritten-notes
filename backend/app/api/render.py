@@ -23,6 +23,7 @@ class RenderRequest(BaseModel):
     style_id: str = "patrick_hand"
     paper_id: str = "plain"
     seed: int = Field(default=0, ge=0)
+    scale: float = Field(default=1.0, ge=0.6, le=1.8)
 
 
 @router.post(
@@ -44,6 +45,7 @@ async def render(request: RenderRequest) -> Response:
         style_id=request.style_id,
         paper_id=request.paper_id,
         seed=request.seed,
+        scale=request.scale,
     )
 
     # Rendering is synchronous CPU work. Awaiting it directly would block the
