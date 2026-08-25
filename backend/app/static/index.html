@@ -463,6 +463,29 @@ $("newNote").onclick = () => {
   setStatus("New note");
 };
 
+// Live preview: re-render shortly after typing stops. Debouncing matters --
+// without it every keystroke fires a render and the server thrashes.
+let typingTimer = null;
+const DEBOUNCE_MS = 700;
+
+function scheduleRender() {
+  clearTimeout(typingTimer);
+  setStatus("Typing\u2026");
+  typingTimer = setTimeout(generate, DEBOUNCE_MS);
+}
+
+$("raw").addEventListener("input", scheduleRender);
+
+// Changing a chip should redraw immediately -- no typing involved.
+["templates", "styles", "papers"].forEach(id => {
+  $(id).addEventListener("click", e => {
+    if (e.target.classList.contains("chip")) {
+      clearTimeout(typingTimer);
+      generate();
+    }
+  });
+});
+
 $("go").onclick = generate;
 $("save").onclick = saveNote;
 
