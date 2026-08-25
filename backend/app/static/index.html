@@ -5,71 +5,174 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Handwritten Notes</title>
 <style>
-  :root {
-    --paper: #faf8f3; --ink: #24303f; --muted: #8b8578;
-    --line: #e2ddd2; --accent: #8a3b2f;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--paper); color: var(--ink);
-    font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
-  }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 80px; }
-  h1 { font-size: 26px; font-weight: 500; margin: 0 0 4px; letter-spacing: -.01em; }
-  .sub { color: var(--muted); margin: 0 0 40px; }
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
-  @media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
-  textarea {
-    width: 100%; min-height: 340px; padding: 20px; resize: vertical;
-    border: 1px solid var(--line); border-radius: 14px; background: #fff;
-    font: 14px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace;
-    color: var(--ink); outline: none;
-  }
-  textarea:focus { border-color: #c9c1b1; }
-  .group { margin-top: 26px; }
-  .label { font-size: 12px; letter-spacing: .07em; text-transform: uppercase;
-           color: var(--muted); margin-bottom: 9px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip {
-    padding: 7px 15px; border: 1px solid var(--line); border-radius: 999px;
-    background: #fff; cursor: pointer; font-size: 13.5px; color: var(--ink);
-    transition: all .14s ease;
-  }
-  .chip:hover { border-color: #c9c1b1; }
-  .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  button.go {
-    margin-top: 32px; padding: 13px 30px; border: 0; border-radius: 999px;
-    background: var(--ink); color: var(--paper); font-size: 15px; cursor: pointer;
-  }
-  button.go:disabled { opacity: .45; cursor: default; }
-  .preview {
-    border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
-    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.05), 0 12px 32px rgba(0,0,0,.06);
-    min-height: 560px; display: flex; align-items: center; justify-content: center;
-  }
-  .preview iframe { width: 100%; height: 700px; border: 0; display: block; }
-  .empty { color: var(--muted); font-size: 14px; padding: 40px; text-align: center; }
-  .bar { display: flex; align-items: center; gap: 16px; margin-top: 16px; min-height: 24px; }
-  .bar a { color: var(--accent); text-decoration: none; font-size: 14px; }
-  .bar a:hover { text-decoration: underline; }
-  .status { color: var(--muted); font-size: 13.5px; }
-  .err { color: var(--accent); }
+  :root{--paper:#faf8f3;--ink:#24303f;--muted:#8b8578;--line:#e2ddd2;--accent:#8a3b2f;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+       font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",sans-serif}
+  a{color:var(--accent)}
+  .top{display:flex;align-items:baseline;gap:14px;max-width:1280px;margin:0 auto;
+       padding:34px 32px 0}
+  .top h1{font-size:22px;font-weight:500;margin:0;letter-spacing:-.01em}
+  .top .sp{flex:1}
+  .who{font-size:13.5px;color:var(--muted)}
+  .link{background:none;border:0;color:var(--accent);cursor:pointer;font-size:13.5px;padding:0}
+  .link:hover{text-decoration:underline}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:26px 32px 80px}
+  .cols{display:grid;grid-template-columns:230px 1fr 1fr;gap:34px;align-items:start}
+  @media(max-width:1080px){.cols{grid-template-columns:1fr}}
+
+  .label{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
+         margin-bottom:9px}
+  .group{margin-top:24px}
+
+  textarea{width:100%;min-height:320px;padding:19px;resize:vertical;border:1px solid var(--line);
+           border-radius:14px;background:var(--card);color:var(--ink);outline:none;
+           font:14px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace}
+  textarea:focus{border-color:#c9c1b1}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{padding:7px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);
+        cursor:pointer;font-size:13.5px;color:var(--ink);transition:all .14s}
+  .chip:hover{border-color:#c9c1b1}
+  .chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  .row{display:flex;gap:10px;align-items:center;margin-top:28px;flex-wrap:wrap}
+  .btn{padding:12px 26px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);
+       font-size:15px;cursor:pointer}
+  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.45;cursor:default}
+
+  .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);
+           box-shadow:0 1px 3px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.06);min-height:520px;
+           display:flex;align-items:center;justify-content:center}
+  .preview iframe{width:100%;height:680px;border:0;display:block}
+  .empty{color:var(--muted);font-size:14px;padding:40px;text-align:center}
+  .bar{display:flex;align-items:center;gap:16px;margin-top:14px;min-height:22px}
+  .status{color:var(--muted);font-size:13.5px}
+  .err{color:var(--accent)}
+
+  .notes{list-style:none;margin:0;padding:0}
+  .notes li{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
+  .notes button.open{flex:1;text-align:left;background:none;border:0;padding:10px 2px;
+                     cursor:pointer;font-size:14px;color:var(--ink);
+                     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .notes button.open:hover{color:var(--accent)}
+  .notes button.del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px;
+                    padding:4px 6px;line-height:1}
+  .notes button.del:hover{color:var(--accent)}
+  .hint{color:var(--muted);font-size:13px;margin-top:10px}
+
+  dialog{border:0;border-radius:16px;padding:28px;max-width:360px;width:92%;
+         box-shadow:0 20px 60px rgba(0,0,0,.22);background:var(--card);color:var(--ink)}
+  dialog::backdrop{background:rgba(30,26,20,.42)}
+  dialog h2{margin:0 0 4px;font-size:19px;font-weight:500}
+  dialog p.small{margin:0 0 18px;color:var(--muted);font-size:13.5px
+
+cat > app/static/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handwritten Notes</title>
+<style>
+  :root{--paper:#faf8f3;--ink:#24303f;--muted:#8b8578;--line:#e2ddd2;--accent:#8a3b2f;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+       font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",sans-serif}
+  a{color:var(--accent)}
+  .top{display:flex;align-items:baseline;gap:14px;max-width:1280px;margin:0 auto;
+       padding:34px 32px 0}
+  .top h1{font-size:22px;font-weight:500;margin:0;letter-spacing:-.01em}
+  .top .sp{flex:1}
+  .who{font-size:13.5px;color:var(--muted)}
+  .link{background:none;border:0;color:var(--accent);cursor:pointer;font-size:13.5px;padding:0}
+  .link:hover{text-decoration:underline}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:26px 32px 80px}
+  .cols{display:grid;grid-template-columns:230px 1fr 1fr;gap:34px;align-items:start}
+  @media(max-width:1080px){.cols{grid-template-columns:1fr}}
+
+  .label{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
+         margin-bottom:9px}
+  .group{margin-top:24px}
+
+  textarea{width:100%;min-height:320px;padding:19px;resize:vertical;border:1px solid var(--line);
+           border-radius:14px;background:var(--card);color:var(--ink);outline:none;
+           font:14px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace}
+  textarea:focus{border-color:#c9c1b1}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{padding:7px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);
+        cursor:pointer;font-size:13.5px;color:var(--ink);transition:all .14s}
+  .chip:hover{border-color:#c9c1b1}
+  .chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  .row{display:flex;gap:10px;align-items:center;margin-top:28px;flex-wrap:wrap}
+  .btn{padding:12px 26px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);
+       font-size:15px;cursor:pointer}
+  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.45;cursor:default}
+
+  .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);
+           box-shadow:0 1px 3px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.06);min-height:520px;
+           display:flex;align-items:center;justify-content:center}
+  .preview iframe{width:100%;height:680px;border:0;display:block}
+  .empty{color:var(--muted);font-size:14px;padding:40px;text-align:center}
+  .bar{display:flex;align-items:center;gap:16px;margin-top:14px;min-height:22px}
+  .status{color:var(--muted);font-size:13.5px}
+  .err{color:var(--accent)}
+
+  .notes{list-style:none;margin:0;padding:0}
+  .notes li{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
+  .notes button.open{flex:1;text-align:left;background:none;border:0;padding:10px 2px;
+                     cursor:pointer;font-size:14px;color:var(--ink);
+                     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .notes button.open:hover{color:var(--accent)}
+  .notes button.del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px;
+                    padding:4px 6px;line-height:1}
+  .notes button.del:hover{color:var(--accent)}
+  .hint{color:var(--muted);font-size:13px;margin-top:10px}
+
+  dialog{border:0;border-radius:16px;padding:28px;max-width:360px;width:92%;
+         box-shadow:0 20px 60px rgba(0,0,0,.22);background:var(--card);color:var(--ink)}
+  dialog::backdrop{background:rgba(30,26,20,.42)}
+  dialog h2{margin:0 0 4px;font-size:19px;font-weight:500}
+  dialog p.small{margin:0 0 18px;color:var(--muted);font-size:13.5px}
+  dialog input{width:100%;padding:11px 13px;margin-bottom:10px;border:1px solid var(--line);
+               border-radius:10px;font-size:14px;background:var(--paper);color:var(--ink)}
+  dialog .row{margin-top:6px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Handwritten Notes</h1>
-  <p class="sub">Type or paste your notes. Use <code>#</code> for headings, <code>-</code> for bullets, <code>1.</code> for lists.</p>
 
+<div class="top">
+  <h1>Handwritten Notes</h1>
+  <div class="sp"></div>
+  <span class="who" id="who"></span>
+  <button class="link" id="authBtn">Sign in</button>
+</div>
+
+<div class="wrap">
   <div class="cols">
+
+    <aside>
+      <div class="label">Saved notes</div>
+      <ul class="notes" id="noteList"></ul>
+      <p class="hint" id="notesHint">Sign in to save your notes.</p>
+    </aside>
+
     <div>
       <textarea id="raw" spellcheck="false"></textarea>
-
       <div class="group"><div class="label">Template</div><div class="chips" id="templates"></div></div>
       <div class="group"><div class="label">Handwriting</div><div class="chips" id="styles"></div></div>
       <div class="group"><div class="label">Paper</div><div class="chips" id="papers"></div></div>
-
-      <button class="go" id="go">Generate</button>
+      <div class="row">
+        <button class="btn" id="go">Generate</button>
+        <button class="btn ghost" id="save" style="display:none">Save</button>
+        <button class="btn ghost" id="newNote" style="display:none">New</button>
+      </div>
     </div>
 
     <div>
@@ -79,13 +182,33 @@
         <a id="download" style="display:none" download="notes.pdf">Download PDF</a>
       </div>
     </div>
+
   </div>
 </div>
 
-<script>
+<dialog id="authModal">
+  <h2 id="authTitle">Sign in</h2>
+  <p class="small" id="authSub">Your notes are saved to your account.</p>
+  <input id="email" type="email" placeholder="Email" autocomplete="email">
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+  <div class="status err" id="authErr" style="min-height:18px"></div>
+  <div class="row">
+    <button class="btn" id="authGo">Sign in</button>
+    <button class="btn ghost" id="authClose">Cancel</button>
+  </div>
+  <p class="hint">
+    <button class="link" id="authSwap">Create an account instead</button>
+  </p>
+</dialog>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const API = "/api/v1";
 const chosen = { template_id: null, style_id: null, paper_id: null };
-let objectUrl = null;
+let supa = null, session = null, currentNoteId = null, objectUrl = null, mode = "signin";
+
+const $ = id => document.getElementById(id);
 
 const SAMPLE = `Binary Search
 
@@ -105,14 +228,27 @@ Invariant: a condition true before and after every iteration.
 Complexity:
 O(log n)
 
-Warning: fails silently on unsorted input.
+Warning: fails silently on unsorted input.`;
 
-e.g. one million elements needs at most 20 comparisons`;
+function setStatus(text, isError) {
+  $("status").textContent = text;
+  $("status").className = isError ? "status err" : "status";
+}
 
-document.getElementById("raw").value = SAMPLE;
+async function api(path, options = {}) {
+  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+  if (session) headers.Authorization = `Bearer ${session.access_token}`;
+  const res = await fetch(API + path, { ...options, headers });
+  if (!res.ok) {
+    let detail = res.statusText;
+    try { detail = (await res.json()).detail || detail; } catch {}
+    throw new Error(typeof detail === "string" ? detail : "Request failed");
+  }
+  return res;
+}
 
 function chips(containerId, items, key) {
-  const box = document.getElementById(containerId);
+  const box = $(containerId);
   box.innerHTML = "";
   items.forEach((item, i) => {
     const b = document.createElement("button");
@@ -140,62 +276,201 @@ async function loadOptions() {
   chips("papers", p, "paper_id");
 }
 
-function setStatus(text, isError) {
-  const el = document.getElementById("status");
-  el.textContent = text;
-  el.className = isError ? "status err" : "status";
+function showPdf(blob, filename, note, pages) {
+  if (objectUrl) URL.revokeObjectURL(objectUrl);
+  objectUrl = URL.createObjectURL(blob);
+  $("preview").innerHTML = `<iframe src="${objectUrl}#toolbar=0&view=FitH"></iframe>`;
+  const dl = $("download");
+  dl.href = objectUrl;
+  dl.download = filename;
+  dl.style.display = "inline";
+  setStatus(`${note.blocks.length} blocks \u00b7 ${pages} page${pages === "1" ? "" : "s"}`);
 }
 
 async function generate() {
-  const raw = document.getElementById("raw").value.trim();
+  const raw = $("raw").value.trim();
   if (!raw) { setStatus("Nothing to generate.", true); return; }
-
-  const go = document.getElementById("go");
-  go.disabled = true;
+  $("go").disabled = true;
   setStatus("Generating\u2026");
-
   try {
-    // 1. raw text -> structured note
-    const sres = await fetch(`${API}/notes/structure`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ raw_text: raw }),
+    const note = await (await api("/notes/structure", {
+      method: "POST", body: JSON.stringify({ raw_text: raw }),
+    })).json();
+
+    const res = await api("/render", {
+      method: "POST", body: JSON.stringify({ note, ...chosen }),
     });
-    if (!sres.ok) throw new Error((await sres.json()).detail || "Could not structure the text");
-    const note = await sres.json();
-
-    // 2. note -> pdf
-    const rres = await fetch(`${API}/render`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ note, ...chosen }),
-    });
-    if (!rres.ok) throw new Error("Could not render the PDF");
-
-    const pages = rres.headers.get("X-Page-Count");
-    const blob = await rres.blob();
-
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-    objectUrl = URL.createObjectURL(blob);
-
-    document.getElementById("preview").innerHTML =
-      `<iframe src="${objectUrl}#toolbar=0&view=FitH"></iframe>`;
-
-    const dl = document.getElementById("download");
-    dl.href = objectUrl;
-    dl.download = (note.title || "notes").replace(/[^\w\- ]+/g, "") + ".pdf";
-    dl.style.display = "inline";
-
-    setStatus(`${note.blocks.length} blocks \u00b7 ${pages} page${pages === "1" ? "" : "s"}`);
-  } catch (err) {
-    setStatus(err.message, true);
+    const pages = res.headers.get("X-Page-Count");
+    const name = (note.title || "notes").replace(/[^\w\- ]+/g, "") + ".pdf";
+    showPdf(await res.blob(), name, note, pages);
+  } catch (e) {
+    setStatus(e.message, true);
   } finally {
-    go.disabled = false;
+    $("go").disabled = false;
   }
 }
 
-document.getElementById("go").onclick = generate;
-loadOptions().then(generate);
+async function refreshNotes() {
+  const list = $("noteList");
+  list.innerHTML = "";
+  if (!session) { $("notesHint").textContent = "Sign in to save your notes."; return; }
+
+  const notes = await (await api("/notes")).json();
+  $("notesHint").textContent = notes.length ? "" : "No saved notes yet.";
+
+  notes.forEach(n => {
+    const li = document.createElement("li");
+
+    const open = document.createElement("button");
+    open.className = "open";
+    open.textContent = n.title;
+    open.onclick = () => openNote(n.id);
+
+    const del = document.createElement("button");
+    del.className = "del";
+    del.textContent = "\u00d7";
+    del.title = "Delete";
+    del.onclick = async () => {
+      if (!confirm(`Delete "${n.title}"?`)) return;
+      await api(`/notes/${n.id}`, { method: "DELETE" });
+      if (currentNoteId === n.id) currentNoteId = null;
+      refreshNotes();
+    };
+
+    li.append(open, del);
+    list.appendChild(li);
+  });
+}
+
+async function openNote(id) {
+  const row = await (await api(`/notes/${id}`)).json();
+  currentNoteId = id;
+  $("raw").value = row.source_text || "";
+  setStatus(`Opened "${row.title}"`);
+  renderSaved(id);
+}
+
+async function renderSaved(id) {
+  setStatus("Rendering\u2026");
+  try {
+    const r = await (await api(`/notes/${id}/renders`, {
+      method: "POST", body: JSON.stringify(chosen),
+    })).json();
+    $("preview").innerHTML = `<iframe src="${r.download_url}#toolbar=0&view=FitH"></iframe>`;
+    const dl = $("download");
+    dl.href = r.download_url;
+    dl.style.display = "inline";
+    setStatus(`${r.page_count} page${r.page_count === 1 ? "" : "s"} \u00b7 saved`);
+  } catch (e) {
+    setStatus(e.message, true);
+  }
+}
+
+async function saveNote() {
+  const raw = $("raw").value.trim();
+  if (!raw) return;
+  $("save").disabled = true;
+  try {
+    if (currentNoteId) {
+      const note = await (await api("/notes/structure", {
+        method: "POST", body: JSON.stringify({ raw_text: raw }),
+      })).json();
+      await api(`/notes/${currentNoteId}`, {
+        method: "PATCH", body: JSON.stringify({ note }),
+      });
+      setStatus("Saved");
+    } else {
+      const row = await (await api("/notes", {
+        method: "POST", body: JSON.stringify({ raw_text: raw }),
+      })).json();
+      currentNoteId = row.id;
+      setStatus("Saved");
+    }
+    await refreshNotes();
+    await renderSaved(currentNoteId);
+  } catch (e) {
+    setStatus(e.message, true);
+  } finally {
+    $("save").disabled = false;
+  }
+}
+
+function applySession(s) {
+  session = s;
+  const signedIn = !!s;
+  $("who").textContent = signedIn ? s.user.email : "";
+  $("authBtn").textContent = signedIn ? "Sign out" : "Sign in";
+  $("save").style.display = signedIn ? "inline-block" : "none";
+  $("newNote").style.display = signedIn ? "inline-block" : "none";
+  refreshNotes();
+}
+
+function setMode(next) {
+  mode = next;
+  const signup = mode === "signup";
+  $("authTitle").textContent = signup ? "Create account" : "Sign in";
+  $("authGo").textContent = signup ? "Create account" : "Sign in";
+  $("authSwap").textContent = signup ? "I already have an account" : "Create an account instead";
+  $("authErr").textContent = "";
+}
+
+async function initAuth() {
+  const cfg = await fetch(`${API}/config`).then(r => r.json());
+  if (!cfg.auth_enabled) {
+    $("authBtn").style.display = "none";
+    $("notesHint").textContent = "Saving is not configured.";
+    return;
+  }
+  supa = createClient(cfg.supabase_url, cfg.supabase_anon_key);
+  const { data } = await supa.auth.getSession();
+  applySession(data.session);
+  supa.auth.onAuthStateChange((_e, s) => applySession(s));
+}
+
+$("authBtn").onclick = async () => {
+  if (session) { await supa.auth.signOut(); currentNoteId = null; return; }
+  setMode("signin");
+  $("authModal").showModal();
+};
+$("authClose").onclick = () => $("authModal").close();
+$("authSwap").onclick = () => setMode(mode === "signup" ? "signin" : "signup");
+
+$("authGo").onclick = async () => {
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  $("authErr").textContent = "";
+  $("authGo").disabled = true;
+  try {
+    const fn = mode === "signup" ? "signUp" : "signInWithPassword";
+    const { data, error } = await supa.auth[fn]({ email, password });
+    if (error) throw error;
+    if (mode === "signup" && !data.session) {
+      $("authErr").textContent = "Check your email to confirm, then sign in.";
+      return;
+    }
+    $("authModal").close();
+  } catch (e) {
+    $("authErr").textContent = e.message;
+  } finally {
+    $("authGo").disabled = false;
+  }
+};
+
+$("newNote").onclick = () => {
+  currentNoteId = null;
+  $("raw").value = "";
+  $("raw").focus();
+  setStatus("New note");
+};
+
+$("go").onclick = generate;
+$("save").onclick = saveNote;
+
+$("raw").value = SAMPLE;
+setMode("signin");
+await loadOptions();
+await initAuth();
+await generate();
 </script>
 </body>
 </html>
