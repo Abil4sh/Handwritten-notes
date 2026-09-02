@@ -14,6 +14,7 @@ from app.auth.dependencies import get_current_user
 from app.db import notes_repo
 from app.notes.schema import Note
 from app.notes.structure import structure_note
+from app.notes.transcript import clean_transcript
 
 router = APIRouter(tags=["notes"])
 
@@ -22,6 +23,11 @@ MAX_INPUT_CHARS = 8000
 
 class StructureRequest(BaseModel):
     raw_text: str = Field(min_length=1, max_length=MAX_INPUT_CHARS)
+
+
+class TranscriptRequest(BaseModel):
+    transcript: str = Field(min_length=1, max_length=40000)
+    title: str | None = None
 
 
 class CreateNoteRequest(BaseModel):
@@ -36,6 +42,18 @@ class UpdateNoteRequest(BaseModel):
 async def structure(request: StructureRequest) -> Note:
     """Public: raw text to structured note, nothing saved."""
     return await run_in_threadpool(structure_note, request.raw_text)
+
+
+@router.post("/notes/from-transcript")
+async def from_transcript(request: TranscriptRequest) -> dict:
+    """Public: speech transcript -> marked-up text the editor can show.
+
+    Returns the text rather than a Note so the person can read and correct it
+    before it becomes a page. Speech recognition makes mistakes; hiding the
+    intermediate step would hide them too.
+    """
+    text = await run_in_threadpool(clean_transcript, request.transcript, request.title)
+    return {"raw_text": text}
 
 
 @router.post("/notes", status_code=201)

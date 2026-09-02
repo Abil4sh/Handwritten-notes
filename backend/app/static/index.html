@@ -2,222 +2,232 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Handwritten Notes</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--paper:#faf8f3;--ink:#24303f;--muted:#8b8578;--line:#e2ddd2;--accent:#8a3b2f;--card:#fff}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);
-       font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",sans-serif}
-  a{color:var(--accent)}
-  .top{display:flex;align-items:baseline;gap:14px;max-width:1280px;margin:0 auto;
-       padding:34px 32px 0}
-  .top h1{font-size:22px;font-weight:500;margin:0;letter-spacing:-.01em}
-  .top .sp{flex:1}
-  .who{font-size:13.5px;color:var(--muted)}
-  .link{background:none;border:0;color:var(--accent);cursor:pointer;font-size:13.5px;padding:0}
-  .link:hover{text-decoration:underline}
+:root{
+  --bg:#fbfaf8; --panel:#f4f2ee; --edge:#e6e2da; --edge-2:#d8d3c8;
+  --ink:#1d232e; --dim:#6d7481; --faint:#9aa0aa;
+  --paper:#fdfcf7; --rule:#b9cbe0; --red:#c0453c;
+  --y:#f5e06a; --g:#a8dc8c; --b:#96c9ec; --p:#f0a8c0; --o:#f5bb78;
+  --sans:"Instrument Sans",-apple-system,"Segoe UI",sans-serif;
+  --hand:"Caveat",cursive;
+  --lift:0 1px 2px rgba(29,35,46,.06),0 14px 38px rgba(29,35,46,.10);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+     font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea{font-family:inherit;font-size:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.view{display:none!important}
+.view.on{display:block!important}
+#auth.on{display:grid!important}
 
-  .wrap{max-width:1280px;margin:0 auto;padding:26px 32px 80px}
-  .cols{display:grid;grid-template-columns:230px 1fr 1fr;gap:34px;align-items:start}
-  @media(max-width:1080px){.cols{grid-template-columns:1fr}}
+/* ---------- ruled sheet ---------- */
+.sheet{background:var(--paper);border-radius:2px;box-shadow:var(--lift);position:relative;
+  background-image:repeating-linear-gradient(var(--paper) 0 27px,var(--rule) 27px 28px);
+  background-position:0 8px;overflow:hidden}
+.sheet::before{content:"";position:absolute;top:0;bottom:0;left:52px;width:1px;
+  background:var(--red);opacity:.5}
 
-  .label{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
-         margin-bottom:9px}
-  .group{margin-top:24px}
+/* ---------- auth ---------- */
+#auth{min-height:100dvh;place-items:center;padding:26px;
+      background:radial-gradient(120% 90% at 50% 0%,#f0ede6,var(--bg))}
+.login{width:100%;max-width:384px;padding:42px 38px 34px 74px;
+  animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(12px) rotate(-.35deg)}to{opacity:1;transform:none}}
+.login h1{font-family:var(--hand);font-size:38px;font-weight:600;margin:0;line-height:1.05}
+.login .lede{color:var(--dim);margin:2px 0 24px;font-size:13.5px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;color:var(--dim);margin-bottom:2px}
+.field input{width:100%;padding:5px 2px 6px;border:0;border-bottom:1.5px solid rgba(29,35,46,.18);
+  background:transparent;font-size:16px;font-family:var(--hand)}
+.field input::placeholder{font-family:var(--sans);font-size:13.5px;color:rgba(29,35,46,.28)}
+.field input:focus{outline:none;border-bottom-color:var(--red)}
+.pen{margin-top:20px;width:100%;padding:11px;border:0;border-radius:6px;background:var(--ink);
+  color:var(--paper);cursor:pointer;font-weight:500}
+.pen:disabled{opacity:.4;cursor:default}
+.swap{background:none;border:0;color:var(--dim);cursor:pointer;font-size:13px;padding:12px 0 0;
+  text-decoration:underline;text-underline-offset:3px}
+.skip{display:block;margin:16px auto 0;background:none;border:0;color:var(--faint);cursor:pointer;
+  font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.err{min-height:16px;font-size:12.5px;color:var(--red);margin-top:6px}
 
-  textarea{width:100%;min-height:320px;padding:19px;resize:vertical;border:1px solid var(--line);
-           border-radius:14px;background:var(--card);color:var(--ink);outline:none;
-           font:14px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace}
-  textarea:focus{border-color:#c9c1b1}
+/* ---------- app shell ---------- */
+.shell{display:grid;grid-template-columns:236px 1fr;height:100dvh}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{display:none}}
+.side{background:var(--panel);border-right:1px solid var(--edge);padding:16px 12px;
+      display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.brand{font-family:var(--hand);font-size:23px;font-weight:600;padding:2px 8px 14px}
+.side .new{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:0;
+  border-radius:6px;background:var(--ink);color:var(--paper);cursor:pointer;margin-bottom:14px;
+  font-weight:500}
+.side h3{font-size:11.5px;color:var(--faint);font-weight:500;margin:6px 8px 6px;letter-spacing:.02em}
+.item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;
+  border:0;background:none;width:100%;text-align:left;color:var(--ink);font-size:14px}
+.item:hover{background:rgba(29,35,46,.055)}
+.item.sel{background:rgba(29,35,46,.085);font-weight:500}
+.item .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .x{opacity:0;border:0;background:none;color:var(--faint);cursor:pointer;font-size:15px;
+  line-height:1;padding:0 2px}
+.item:hover .x{opacity:1}
+.item .x:hover{color:var(--red)}
+.side .foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--edge);font-size:12.5px;
+  color:var(--dim);display:flex;align-items:center;gap:8px}
+.side .foot button{background:none;border:0;color:var(--dim);cursor:pointer;font-size:12.5px;
+  text-decoration:underline;text-underline-offset:2px;margin-left:auto}
+.empty{font-size:13px;color:var(--faint);padding:6px 10px}
 
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{padding:7px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);
-        cursor:pointer;font-size:13.5px;color:var(--ink);transition:all .14s}
-  .chip:hover{border-color:#c9c1b1}
-  .chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* ---------- main ---------- */
+.main{display:flex;flex-direction:column;min-width:0}
+.toolbar{display:flex;align-items:center;gap:6px;padding:9px 16px;border-bottom:1px solid var(--edge);
+  background:var(--bg);flex-wrap:wrap}
+.tgrp{display:flex;gap:2px;align-items:center;padding-right:6px;margin-right:2px;
+      border-right:1px solid var(--edge)}
+.tgrp:last-of-type{border-right:0}
+.tool{width:32px;height:31px;display:grid;place-items:center;border:0;border-radius:6px;
+  background:none;cursor:pointer;color:var(--dim)}
+.tool:hover{background:rgba(29,35,46,.07);color:var(--ink)}
+.tool svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.swatch{width:21px;height:21px;border-radius:50%;border:1.5px solid rgba(29,35,46,.14);
+  cursor:pointer;padding:0}
+.swatch:hover{transform:scale(1.12)}
+.spacer{flex:1}
+.pill{padding:6px 12px;border:1px solid var(--edge-2);border-radius:6px;background:var(--paper);
+  cursor:pointer;font-size:13px}
+.pill:hover{border-color:var(--faint)}
+.pill.go{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.msg{font-size:12.5px;color:var(--faint);min-width:70px}
+.msg.bad{color:var(--red)}
 
-  .row{display:flex;gap:10px;align-items:center;margin-top:28px;flex-wrap:wrap}
-  .btn{padding:12px 26px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);
-       font-size:15px;cursor:pointer}
-  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-  .btn:disabled{opacity:.45;cursor:default}
-
-  .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);
-           box-shadow:0 1px 3px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.06);min-height:520px;
-           display:flex;align-items:center;justify-content:center}
-  .preview iframe{width:100%;height:680px;border:0;display:block}
-  .empty{color:var(--muted);font-size:14px;padding:40px;text-align:center}
-  .bar{display:flex;align-items:center;gap:16px;margin-top:14px;min-height:22px}
-  .status{color:var(--muted);font-size:13.5px}
-  .err{color:var(--accent)}
-
-  .notes{list-style:none;margin:0;padding:0}
-  .notes li{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
-  .notes button.open{flex:1;text-align:left;background:none;border:0;padding:10px 2px;
-                     cursor:pointer;font-size:14px;color:var(--ink);
-                     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .notes button.open:hover{color:var(--accent)}
-  .notes button.del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px;
-                    padding:4px 6px;line-height:1}
-  .notes button.del:hover{color:var(--accent)}
-  .hint{color:var(--muted);font-size:13px;margin-top:10px}
-
-  dialog{border:0;border-radius:16px;padding:28px;max-width:360px;width:92%;
-         box-shadow:0 20px 60px rgba(0,0,0,.22);background:var(--card);color:var(--ink)}
-  dialog::backdrop{background:rgba(30,26,20,.42)}
-  dialog h2{margin:0 0 4px;font-size:19px;font-weight:500}
-  dialog p.small{margin:0 0 18px;color:var(--muted);font-size:13.5px
-
-cat > app/static/index.html << 'HTMLEOF'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Handwritten Notes</title>
-<style>
-  :root{--paper:#faf8f3;--ink:#24303f;--muted:#8b8578;--line:#e2ddd2;--accent:#8a3b2f;--card:#fff}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);
-       font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",sans-serif}
-  a{color:var(--accent)}
-  .top{display:flex;align-items:baseline;gap:14px;max-width:1280px;margin:0 auto;
-       padding:34px 32px 0}
-  .top h1{font-size:22px;font-weight:500;margin:0;letter-spacing:-.01em}
-  .top .sp{flex:1}
-  .who{font-size:13.5px;color:var(--muted)}
-  .link{background:none;border:0;color:var(--accent);cursor:pointer;font-size:13.5px;padding:0}
-  .link:hover{text-decoration:underline}
-
-  .wrap{max-width:1280px;margin:0 auto;padding:26px 32px 80px}
-  .cols{display:grid;grid-template-columns:230px 1fr 1fr;gap:34px;align-items:start}
-  @media(max-width:1080px){.cols{grid-template-columns:1fr}}
-
-  .label{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
-         margin-bottom:9px}
-  .group{margin-top:24px}
-
-  textarea{width:100%;min-height:320px;padding:19px;resize:vertical;border:1px solid var(--line);
-           border-radius:14px;background:var(--card);color:var(--ink);outline:none;
-           font:14px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace}
-  textarea:focus{border-color:#c9c1b1}
-
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{padding:7px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);
-        cursor:pointer;font-size:13.5px;color:var(--ink);transition:all .14s}
-  .chip:hover{border-color:#c9c1b1}
-  .chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-
-  .row{display:flex;gap:10px;align-items:center;margin-top:28px;flex-wrap:wrap}
-  .btn{padding:12px 26px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);
-       font-size:15px;cursor:pointer}
-  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-  .btn:disabled{opacity:.45;cursor:default}
-
-  .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);
-           box-shadow:0 1px 3px rgba(0,0,0,.05),0 12px 32px rgba(0,0,0,.06);min-height:520px;
-           display:flex;align-items:center;justify-content:center}
-  .preview iframe{width:100%;height:680px;border:0;display:block}
-  .empty{color:var(--muted);font-size:14px;padding:40px;text-align:center}
-  .bar{display:flex;align-items:center;gap:16px;margin-top:14px;min-height:22px}
-  .status{color:var(--muted);font-size:13.5px}
-  .err{color:var(--accent)}
-
-  .notes{list-style:none;margin:0;padding:0}
-  .notes li{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
-  .notes button.open{flex:1;text-align:left;background:none;border:0;padding:10px 2px;
-                     cursor:pointer;font-size:14px;color:var(--ink);
-                     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .notes button.open:hover{color:var(--accent)}
-  .notes button.del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px;
-                    padding:4px 6px;line-height:1}
-  .notes button.del:hover{color:var(--accent)}
-  .hint{color:var(--muted);font-size:13px;margin-top:10px}
-
-  dialog{border:0;border-radius:16px;padding:28px;max-width:360px;width:92%;
-         box-shadow:0 20px 60px rgba(0,0,0,.22);background:var(--card);color:var(--ink)}
-  dialog::backdrop{background:rgba(30,26,20,.42)}
-  dialog h2{margin:0 0 4px;font-size:19px;font-weight:500}
-  dialog p.small{margin:0 0 18px;color:var(--muted);font-size:13.5px}
-  dialog input{width:100%;padding:11px 13px;margin-bottom:10px;border:1px solid var(--line);
-               border-radius:10px;font-size:14px;background:var(--paper);color:var(--ink)}
-  dialog .row{margin-top:6px}
+.split{display:grid;grid-template-columns:minmax(320px,1fr) 1.15fr;flex:1;min-height:0}
+@media(max-width:1080px){.split{grid-template-columns:1fr}}
+.compose{display:flex;flex-direction:column;border-right:1px solid var(--edge);min-width:0}
+.compose textarea{flex:1;width:100%;padding:22px 24px;border:0;resize:none;outline:none;
+  background:var(--bg);font:14px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;
+  color:var(--ink)}
+.opts{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:11px 24px;
+  border-top:1px solid var(--edge);background:var(--panel)}
+.opt-g{display:flex;gap:3px;align-items:center}
+.opt-g > span{font-size:11.5px;color:var(--faint);margin-right:3px}
+.opt{padding:4px 10px;border:1px solid transparent;border-radius:5px;background:none;
+  cursor:pointer;font-size:12.5px;color:var(--dim)}
+.opt:hover{background:rgba(29,35,46,.06);color:var(--ink)}
+.opt[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+input[type=range]{width:88px;accent-color:var(--ink)}
+.stage{background:var(--panel);padding:22px;overflow-y:auto;display:flex;flex-direction:column}
+.stage iframe{flex:1;width:100%;min-height:520px;border:0;border-radius:2px;box-shadow:var(--lift);
+  background:var(--paper)}
+.waiting{margin:auto;color:var(--faint);font-size:13.5px;text-align:center}
+.waiting b{display:block;font-family:var(--hand);font-size:26px;color:var(--dim);font-weight:600;
+  margin-bottom:4px}
 </style>
 </head>
 <body>
 
-<div class="top">
-  <h1>Handwritten Notes</h1>
-  <div class="sp"></div>
-  <span class="who" id="who"></span>
-  <button class="link" id="authBtn">Sign in</button>
-</div>
+<section class="view on" id="auth">
+  <div>
+    <form class="sheet login" id="loginForm">
+      <h1 id="authH">Welcome back</h1>
+      <p class="lede" id="authLede">Your notes are waiting.</p>
+      <div class="field"><label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" placeholder="you@college.edu" required></div>
+      <div class="field"><label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" placeholder="At least 6 characters" required></div>
+      <div class="err" id="authErr"></div>
+      <button class="pen" id="authGo" type="submit">Sign in</button>
+      <button class="swap" id="authSwap" type="button">Create an account</button>
+    </form>
+    <button class="skip" id="skip">Try it without an account</button>
+  </div>
+</section>
 
-<div class="wrap">
-  <div class="cols">
+<section class="view" id="app">
+ <div class="shell">
+  <aside class="side">
+    <div class="brand">notes</div>
+    <button class="new" id="newNote">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      New note
+    </button>
+    <h3>Your notes</h3>
+    <div id="list"></div>
+    <p class="empty" id="empty">Nothing saved yet.</p>
+    <div class="foot"><span id="who">Guest</span><button id="out">Sign in</button></div>
+  </aside>
 
-    <aside>
-      <div class="label">Saved notes</div>
-      <ul class="notes" id="noteList"></ul>
-      <p class="hint" id="notesHint">Sign in to save your notes.</p>
-    </aside>
-
-    <div>
-      <textarea id="raw" spellcheck="false"></textarea>
-      <div class="group"><div class="label">Template</div><div class="chips" id="templates"></div></div>
-      <div class="group"><div class="label">Handwriting</div><div class="chips" id="styles"></div></div>
-      <div class="group"><div class="label">Paper</div><div class="chips" id="papers"></div></div>
-      <div class="group">
-        <div class="label">Size <span id="sizeVal" style="text-transform:none;letter-spacing:0">100%</span></div>
-        <input type="range" id="sizeSlider" min="70" max="170" step="5" value="100" style="width:220px">
+  <main class="main">
+    <div class="toolbar">
+      <div class="tgrp">
+        <button class="tool" data-ins="# " title="Heading"><svg viewBox="0 0 24 24"><path d="M6 4v16M18 4v16M6 12h12"/></svg></button>
+        <button class="tool" data-ins="## " title="Subheading"><svg viewBox="0 0 24 24"><path d="M7 6v12M17 6v12M7 12h10"/></svg></button>
+        <button class="tool" data-ins="- " title="Bullet list"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg></button>
+        <button class="tool" data-ins="1. " title="Numbered list"><svg viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10M4 5l1.5-.5V9M4 15h2.5L4 18h2.5"/></svg></button>
+        <button class="tool" data-ins="> " title="Quote"><svg viewBox="0 0 24 24"><path d="M6 15V9h4v6H6zm8 0V9h4v6h-4z"/></svg></button>
       </div>
-      <div class="row">
-        <button class="btn" id="go">Generate</button>
-        <button class="btn ghost" id="save" style="display:none">Save</button>
-        <button class="btn ghost" id="newNote" style="display:none">New</button>
+      <div class="tgrp">
+        <button class="tool" data-ins="Warning: " title="Sticky note"><svg viewBox="0 0 24 24"><path d="M4 4h16v11l-5 5H4z"/><path d="M20 15h-5v5"/></svg></button>
+        <button class="tool" data-wrap="term" title="Definition"><svg viewBox="0 0 24 24"><path d="M5 5h14M5 12h9M5 19h14"/></svg></button>
+        <button class="tool" data-ins="e.g. " title="Example"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 16v-4M12 8.5h.01"/></svg></button>
       </div>
+      <div class="tgrp" id="pens">
+        <button class="tool" title="Highlighter" style="cursor:default"><svg viewBox="0 0 24 24"><path d="M14 4l6 6-8 8H6v-6z"/><path d="M3 21h18"/></svg></button>
+        <button class="swatch" data-hl="" style="background:var(--y)" title="Yellow"></button>
+        <button class="swatch" data-hl="g:" style="background:var(--g)" title="Green"></button>
+        <button class="swatch" data-hl="b:" style="background:var(--b)" title="Blue"></button>
+        <button class="swatch" data-hl="p:" style="background:var(--p)" title="Pink"></button>
+        <button class="swatch" data-hl="o:" style="background:var(--o)" title="Orange"></button>
+      </div>
+      <div class="tgrp">
+        <button class="tool" id="rec" title="Record a lecture">
+          <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        </button>
+        <span id="recState" style="font-size:12px;color:var(--faint)"></span>
+      </div>
+      <div class="spacer"></div>
+      <span class="msg" id="msg"></span>
+      <button class="pill" id="save" style="display:none">Save</button>
+      <a class="pill go" id="download" download="notes.pdf" style="display:none">Download</a>
     </div>
 
-    <div>
-      <div class="preview" id="preview"><div class="empty">Your notes will appear here</div></div>
-      <div class="bar">
-        <span class="status" id="status"></span>
-        <a id="download" style="display:none" download="notes.pdf">Download PDF</a>
+    <div class="split">
+      <div class="compose">
+        <textarea id="raw" spellcheck="false" aria-label="Your notes"
+          placeholder="Start writing.
+
+Select any text and tap a highlighter colour."></textarea>
+        <div class="opts">
+          <div class="opt-g"><span>Layout</span><div id="templates"></div></div>
+          <div class="opt-g"><span>Hand</span><div id="styles"></div></div>
+          <div class="opt-g"><span>Paper</span><div id="papers"></div></div>
+          <div class="opt-g"><span>Size</span>
+            <input type="range" id="size" min="70" max="170" step="5" value="100" aria-label="Text size"></div>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="waiting"><b>Nothing yet</b>Your page appears here as you write.</div>
       </div>
     </div>
-
-  </div>
-</div>
-
-<dialog id="authModal">
-  <h2 id="authTitle">Sign in</h2>
-  <p class="small" id="authSub">Your notes are saved to your account.</p>
-  <input id="email" type="email" placeholder="Email" autocomplete="email">
-  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
-  <div class="status err" id="authErr" style="min-height:18px"></div>
-  <div class="row">
-    <button class="btn" id="authGo">Sign in</button>
-    <button class="btn ghost" id="authClose">Cancel</button>
-  </div>
-  <p class="hint">
-    <button class="link" id="authSwap">Create an account instead</button>
-  </p>
-</dialog>
+  </main>
+ </div>
+</section>
 
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const API="/api/v1", $=id=>document.getElementById(id);
+const spec={template_id:null,style_id:null,paper_id:null,scale:1};
+let supa=null,session=null,noteId=null,blobUrl=null,mode="signin",timer=null,guest=false;
 
-const API = "/api/v1";
-const chosen = { template_id: null, style_id: null, paper_id: null, scale: 1.0 };
-let supa = null, session = null, currentNoteId = null, objectUrl = null, mode = "signin";
-
-const $ = id => document.getElementById(id);
-
-const SAMPLE = `Binary Search
+const SAMPLE=`Binary Search
 
 # Definition
-Binary search finds a target in a sorted array by repeatedly halving
+Binary search finds a target in a sorted array by ==repeatedly halving==
 the search interval.
 
 Invariant: a condition true before and after every iteration.
@@ -232,279 +242,244 @@ Invariant: a condition true before and after every iteration.
 Complexity:
 O(log n)
 
-Warning: fails silently on unsorted input.`;
+Warning: ==o:fails silently== on unsorted input.`;
 
-function setStatus(text, isError) {
-  $("status").textContent = text;
-  $("status").className = isError ? "status err" : "status";
+const show=id=>document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id===id));
+const say=(t,bad)=>{$("msg").textContent=t;$("msg").className=bad?"msg bad":"msg"};
+
+async function call(p,o={}){
+  const h={"Content-Type":"application/json",...(o.headers||{})};
+  if(session) h.Authorization=`Bearer ${session.access_token}`;
+  const r=await fetch(API+p,{...o,headers:h});
+  if(!r.ok){let d=r.statusText;try{d=(await r.json()).detail||d}catch{}
+    throw new Error(typeof d==="string"?d:"Something went wrong")}
+  return r;
 }
 
-async function api(path, options = {}) {
-  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-  if (session) headers.Authorization = `Bearer ${session.access_token}`;
-  const res = await fetch(API + path, { ...options, headers });
-  if (!res.ok) {
-    let detail = res.statusText;
-    try { detail = (await res.json()).detail || detail; } catch {}
-    throw new Error(typeof detail === "string" ? detail : "Request failed");
-  }
-  return res;
+/* ---- toolbar: real edits to the text, not decoration ---- */
+const ta=()=>$("raw");
+function replaceSel(text,caretBack=0){
+  const t=ta(),s=t.selectionStart,e=t.selectionEnd;
+  t.setRangeText(text,s,e,"end");
+  if(caretBack) t.setSelectionRange(t.selectionStart-caretBack,t.selectionStart-caretBack);
+  t.focus();schedule();
 }
+function lineStart(){
+  const t=ta();return t.value.lastIndexOf("\n",t.selectionStart-1)+1;
+}
+function prefixLine(prefix){
+  const t=ta(),at=lineStart();
+  t.setRangeText(prefix,at,at,"end");t.focus();schedule();
+}
+function highlight(code){
+  const t=ta(),s=t.selectionStart,e=t.selectionEnd;
+  if(s===e){ replaceSel(`==${code}highlighted==`); return }
+  replaceSel(`==${code}${t.value.slice(s,e)}==`);
+}
+document.querySelectorAll("[data-ins]").forEach(b=>
+  b.onclick=()=>prefixLine(b.dataset.ins));
+document.querySelectorAll("[data-wrap]").forEach(b=>
+  b.onclick=()=>{const t=ta(),s=t.selectionStart,e=t.selectionEnd;
+    replaceSel(s===e?"Term: meaning":`${t.value.slice(s,e)}: `)});
+document.querySelectorAll("[data-hl]").forEach(b=>
+  b.onclick=()=>highlight(b.dataset.hl));
 
-function chips(containerId, items, key) {
-  const box = $(containerId);
-  box.innerHTML = "";
-  items.forEach((item, i) => {
-    const b = document.createElement("button");
-    b.className = "chip";
-    b.textContent = item.name;
-    b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
-    if (i === 0) chosen[key] = item.id;
-    b.onclick = () => {
-      chosen[key] = item.id;
-      [...box.children].forEach(c => c.setAttribute("aria-pressed", "false"));
-      b.setAttribute("aria-pressed", "true");
-    };
-    box.appendChild(b);
+/* ---- options ---- */
+function opts(box,items,key){
+  const el=$(box);el.innerHTML="";
+  items.forEach((it,i)=>{
+    const b=document.createElement("button");
+    b.className="opt";b.type="button";b.textContent=it.name;
+    b.setAttribute("aria-pressed",i===0);
+    if(i===0) spec[key]=it.id;
+    b.onclick=()=>{spec[key]=it.id;
+      [...el.children].forEach(c=>c.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");clearTimeout(timer);draw()};
+    el.appendChild(b);
   });
 }
-
-async function loadOptions() {
-  const [t, s, p] = await Promise.all([
-    fetch(`${API}/templates`).then(r => r.json()),
-    fetch(`${API}/handwriting-styles`).then(r => r.json()),
-    fetch(`${API}/papers`).then(r => r.json()),
-  ]);
-  chips("templates", t, "template_id");
-  chips("styles", s, "style_id");
-  chips("papers", p, "paper_id");
+async function loadOptions(){
+  const [t,s,p]=await Promise.all(["templates","handwriting-styles","papers"]
+    .map(k=>fetch(`${API}/${k}`).then(r=>r.json())));
+  opts("templates",t,"template_id");opts("styles",s,"style_id");opts("papers",p,"paper_id");
 }
 
-function showPdf(blob, filename, note, pages) {
-  if (objectUrl) URL.revokeObjectURL(objectUrl);
-  objectUrl = URL.createObjectURL(blob);
-  $("preview").innerHTML = `<iframe src="${objectUrl}#toolbar=0&view=FitH"></iframe>`;
-  const dl = $("download");
-  dl.href = objectUrl;
-  dl.download = filename;
-  dl.style.display = "inline";
-  setStatus(`${note.blocks.length} blocks \u00b7 ${pages} page${pages === "1" ? "" : "s"}`);
+/* ---- render ---- */
+async function draw(){
+  const raw=ta().value.trim();
+  if(!raw){$("stage").innerHTML='<div class="waiting"><b>Nothing yet</b>Your page appears here as you write.</div>';
+    $("download").style.display="none";say("");return}
+  say("Writing\u2026");
+  try{
+    const note=await(await call("/notes/structure",{method:"POST",
+      body:JSON.stringify({raw_text:raw})})).json();
+    const res=await call("/render",{method:"POST",body:JSON.stringify({note,...spec})});
+    const pages=res.headers.get("X-Page-Count");
+    if(blobUrl) URL.revokeObjectURL(blobUrl);
+    blobUrl=URL.createObjectURL(await res.blob());
+    $("stage").innerHTML=`<iframe src="${blobUrl}#toolbar=0&view=FitH" title="Preview"></iframe>`;
+    const dl=$("download");dl.href=blobUrl;
+    dl.download=(note.title||"notes").replace(/[^\w\- ]+/g,"")+".pdf";
+    dl.style.display="inline-block";
+    say(`${pages} page${pages==="1"?"":"s"}`);
+  }catch(e){say(e.message,true)}
 }
+function schedule(){clearTimeout(timer);timer=setTimeout(draw,650)}
 
-async function generate() {
-  const raw = $("raw").value.trim();
-  if (!raw) { setStatus("Nothing to generate.", true); return; }
-  $("go").disabled = true;
-  setStatus("Generating\u2026");
-  try {
-    const note = await (await api("/notes/structure", {
-      method: "POST", body: JSON.stringify({ raw_text: raw }),
-    })).json();
-
-    const res = await api("/render", {
-      method: "POST", body: JSON.stringify({ note, ...chosen }),
-    });
-    const pages = res.headers.get("X-Page-Count");
-    const name = (note.title || "notes").replace(/[^\w\- ]+/g, "") + ".pdf";
-    showPdf(await res.blob(), name, note, pages);
-  } catch (e) {
-    setStatus(e.message, true);
-  } finally {
-    $("go").disabled = false;
-  }
-}
-
-async function refreshNotes() {
-  const list = $("noteList");
-  list.innerHTML = "";
-  if (!session) { $("notesHint").textContent = "Sign in to save your notes."; return; }
-
-  const notes = await (await api("/notes")).json();
-  $("notesHint").textContent = notes.length ? "" : "No saved notes yet.";
-
-  notes.forEach(n => {
-    const li = document.createElement("li");
-
-    const open = document.createElement("button");
-    open.className = "open";
-    open.textContent = n.title;
-    open.onclick = () => openNote(n.id);
-
-    const del = document.createElement("button");
-    del.className = "del";
-    del.textContent = "\u00d7";
-    del.title = "Delete";
-    del.onclick = async () => {
-      if (!confirm(`Delete "${n.title}"?`)) return;
-      await api(`/notes/${n.id}`, { method: "DELETE" });
-      if (currentNoteId === n.id) currentNoteId = null;
-      refreshNotes();
-    };
-
-    li.append(open, del);
-    list.appendChild(li);
+/* ---- notes ---- */
+async function refresh(){
+  const box=$("list");box.innerHTML="";
+  if(!session){$("empty").textContent="Sign in to save notes.";return}
+  const rows=await(await call("/notes")).json();
+  $("empty").style.display=rows.length?"none":"block";
+  $("empty").textContent="Nothing saved yet.";
+  rows.forEach(n=>{
+    const b=document.createElement("button");
+    b.className="item"+(n.id===noteId?" sel":"");
+    const t=document.createElement("span");t.className="t";t.textContent=n.title;
+    const x=document.createElement("span");x.className="x";x.textContent="\u00d7";
+    x.onclick=async ev=>{ev.stopPropagation();
+      if(!confirm(`Delete "${n.title}"?`))return;
+      await call(`/notes/${n.id}`,{method:"DELETE"});
+      if(noteId===n.id){noteId=null;ta().value="";draw()}
+      refresh()};
+    b.append(t,x);b.onclick=()=>open_(n.id);box.appendChild(b);
   });
 }
-
-async function openNote(id) {
-  const row = await (await api(`/notes/${id}`)).json();
-  currentNoteId = id;
-  $("raw").value = row.source_text || "";
-  setStatus(`Opened "${row.title}"`);
-  renderSaved(id);
+async function open_(id){
+  const row=await(await call(`/notes/${id}`)).json();
+  noteId=id;ta().value=row.source_text||"";refresh();draw();
 }
-
-async function renderSaved(id) {
-  setStatus("Rendering\u2026");
-  try {
-    const r = await (await api(`/notes/${id}/renders`, {
-      method: "POST", body: JSON.stringify(chosen),
-    })).json();
-    $("preview").innerHTML = `<iframe src="${r.download_url}#toolbar=0&view=FitH"></iframe>`;
-    const dl = $("download");
-    dl.href = r.download_url;
-    dl.style.display = "inline";
-    setStatus(`${r.page_count} page${r.page_count === 1 ? "" : "s"} \u00b7 saved`);
-  } catch (e) {
-    setStatus(e.message, true);
-  }
-}
-
-async function saveNote() {
-  const raw = $("raw").value.trim();
-  if (!raw) return;
-  $("save").disabled = true;
-  try {
-    if (currentNoteId) {
-      const note = await (await api("/notes/structure", {
-        method: "POST", body: JSON.stringify({ raw_text: raw }),
-      })).json();
-      await api(`/notes/${currentNoteId}`, {
-        method: "PATCH", body: JSON.stringify({ note }),
-      });
-      setStatus("Saved");
-    } else {
-      const row = await (await api("/notes", {
-        method: "POST", body: JSON.stringify({ raw_text: raw }),
-      })).json();
-      currentNoteId = row.id;
-      setStatus("Saved");
+async function save(){
+  const raw=ta().value.trim();if(!raw)return;
+  $("save").disabled=true;
+  try{
+    if(noteId){
+      const note=await(await call("/notes/structure",{method:"POST",
+        body:JSON.stringify({raw_text:raw})})).json();
+      await call(`/notes/${noteId}`,{method:"PATCH",body:JSON.stringify({note})});
+    }else{
+      const row=await(await call("/notes",{method:"POST",
+        body:JSON.stringify({raw_text:raw})})).json();
+      noteId=row.id;
     }
-    await refreshNotes();
-    await renderSaved(currentNoteId);
-  } catch (e) {
-    setStatus(e.message, true);
-  } finally {
-    $("save").disabled = false;
-  }
+    say("Saved");refresh();
+  }catch(e){say(e.message,true)}finally{$("save").disabled=false}
 }
 
-function applySession(s) {
-  session = s;
-  const signedIn = !!s;
-  $("who").textContent = signedIn ? s.user.email : "";
-  $("authBtn").textContent = signedIn ? "Sign out" : "Sign in";
-  $("save").style.display = signedIn ? "inline-block" : "none";
-  $("newNote").style.display = signedIn ? "inline-block" : "none";
-  refreshNotes();
+/* ---- auth ---- */
+function applySession(s){
+  session=s;
+  $("save").style.display=s?"inline-block":"none";
+  if(s){guest=false;$("who").textContent=s.user.email;$("out").textContent="Sign out";
+        show("app");refresh()}
+  else if(!guest){show("auth")}
 }
-
-function setMode(next) {
-  mode = next;
-  const signup = mode === "signup";
-  $("authTitle").textContent = signup ? "Create account" : "Sign in";
-  $("authGo").textContent = signup ? "Create account" : "Sign in";
-  $("authSwap").textContent = signup ? "I already have an account" : "Create an account instead";
-  $("authErr").textContent = "";
+function setMode(m){
+  mode=m;const up=m==="signup";
+  $("authH").textContent=up?"Start a notebook":"Welcome back";
+  $("authLede").textContent=up?"Six characters is enough for a password.":"Your notes are waiting.";
+  $("authGo").textContent=up?"Create account":"Sign in";
+  $("authSwap").textContent=up?"I already have an account":"Create an account";
+  $("password").autocomplete=up?"new-password":"current-password";
+  $("authErr").textContent="";
 }
-
-async function initAuth() {
-  const cfg = await fetch(`${API}/config`).then(r => r.json());
-  if (!cfg.auth_enabled) {
-    $("authBtn").style.display = "none";
-    $("notesHint").textContent = "Saving is not configured.";
-    return;
-  }
-  supa = createClient(cfg.supabase_url, cfg.supabase_anon_key);
-  const { data } = await supa.auth.getSession();
+async function init(){
+  await loadOptions();
+  const cfg=await fetch(`${API}/config`).then(r=>r.json());
+  if(!cfg.auth_enabled){$("skip").click();return}
+  supa=createClient(cfg.supabase_url,cfg.supabase_anon_key);
+  const {data}=await supa.auth.getSession();
   applySession(data.session);
-  supa.auth.onAuthStateChange((_e, s) => applySession(s));
+  supa.auth.onAuthStateChange((_e,s)=>applySession(s));
 }
 
-$("authBtn").onclick = async () => {
-  if (session) { await supa.auth.signOut(); currentNoteId = null; return; }
-  setMode("signin");
-  $("authModal").showModal();
+$("loginForm").onsubmit=async e=>{
+  e.preventDefault();
+  if(!supa){$("authErr").textContent="Accounts are not set up on this server.";return}
+  $("authErr").textContent="";$("authGo").disabled=true;
+  try{
+    const fn=mode==="signup"?"signUp":"signInWithPassword";
+    const {data,error}=await supa.auth[fn]({email:$("email").value.trim(),password:$("password").value});
+    if(error) throw error;
+    if(mode==="signup"&&!data.session) $("authErr").textContent="Confirm your email, then sign in.";
+  }catch(err){$("authErr").textContent=err.message}
+  finally{$("authGo").disabled=false}
 };
-$("authClose").onclick = () => $("authModal").close();
-$("authSwap").onclick = () => setMode(mode === "signup" ? "signin" : "signup");
+$("authSwap").onclick=()=>setMode(mode==="signup"?"signin":"signup");
+$("skip").onclick=()=>{guest=true;$("who").textContent="Guest";$("out").textContent="Sign in";
+  show("app");ta().value=SAMPLE;draw()};
+$("out").onclick=async()=>{ if(session){await supa.auth.signOut();noteId=null;guest=false}
+                            else{guest=false;show("auth")} };
+$("newNote").onclick=()=>{noteId=null;ta().value="";refresh();draw();ta().focus()};
+$("save").onclick=save;
+ta().addEventListener("input",schedule);
+$("size").addEventListener("input",e=>{spec.scale=e.target.value/100;
+  clearTimeout(timer);timer=setTimeout(draw,220)});
 
-$("authGo").onclick = async () => {
-  const email = $("email").value.trim();
-  const password = $("password").value;
-  $("authErr").textContent = "";
-  $("authGo").disabled = true;
+/* ---- recording: the browser does the speech recognition, so there is no
+   API key, no upload, and no cost. Chrome and Safari support it. ---- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, listening = false, heard = "";
+
+if (!SR) {
+  $("rec").disabled = true;
+  $("rec").title = "Recording needs Chrome or Safari";
+  $("rec").style.opacity = ".4";
+}
+
+function startRec() {
+  rec = new SR();
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.lang = "en-IN";
+  heard = "";
+
+  rec.onresult = e => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const chunk = e.results[i][0].transcript;
+      if (e.results[i].isFinal) heard += chunk + " ";
+      else interim += chunk;
+    }
+    $("recState").textContent = (heard + interim).slice(-42);
+  };
+  // Recognition stops itself after a pause; restart while the user is still
+  // recording so a whole lecture is captured rather than one sentence.
+  rec.onend = () => { if (listening) rec.start(); };
+  rec.onerror = e => { if (e.error === "not-allowed") { stopRec(); say("Microphone blocked", true); } };
+
+  listening = true;
+  rec.start();
+  $("rec").style.color = "var(--red)";
+  say("Listening\u2026");
+}
+
+async function stopRec() {
+  listening = false;
+  if (rec) rec.stop();
+  $("rec").style.color = "";
+  $("recState").textContent = "";
+
+  const spoken = heard.trim();
+  if (!spoken) { say(""); return; }
+
+  say("Tidying the transcript\u2026");
   try {
-    const fn = mode === "signup" ? "signUp" : "signInWithPassword";
-    const { data, error } = await supa.auth[fn]({ email, password });
-    if (error) throw error;
-    if (mode === "signup" && !data.session) {
-      $("authErr").textContent = "Check your email to confirm, then sign in.";
-      return;
-    }
-    $("authModal").close();
-  } catch (e) {
-    $("authErr").textContent = e.message;
-  } finally {
-    $("authGo").disabled = false;
-  }
-};
-
-$("newNote").onclick = () => {
-  currentNoteId = null;
-  $("raw").value = "";
-  $("raw").focus();
-  setStatus("New note");
-};
-
-// Live preview: re-render shortly after typing stops. Debouncing matters --
-// without it every keystroke fires a render and the server thrashes.
-let typingTimer = null;
-const DEBOUNCE_MS = 700;
-
-function scheduleRender() {
-  clearTimeout(typingTimer);
-  setStatus("Typing\u2026");
-  typingTimer = setTimeout(generate, DEBOUNCE_MS);
+    const r = await (await call("/notes/from-transcript", {
+      method: "POST",
+      body: JSON.stringify({ transcript: spoken, title: null }),
+    })).json();
+    const existing = ta().value.trim();
+    ta().value = existing ? existing + "\n\n" + r.raw_text : r.raw_text;
+    draw();
+  } catch (e) { say(e.message, true); }
 }
 
-$("raw").addEventListener("input", scheduleRender);
+$("rec").onclick = () => listening ? stopRec() : startRec();
 
-// Changing a chip should redraw immediately -- no typing involved.
-["templates", "styles", "papers"].forEach(id => {
-  $(id).addEventListener("click", e => {
-    if (e.target.classList.contains("chip")) {
-      clearTimeout(typingTimer);
-      generate();
-    }
-  });
-});
-
-$("sizeSlider").addEventListener("input", e => {
-  chosen.scale = e.target.value / 100;
-  $("sizeVal").textContent = e.target.value + "%";
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(generate, 250);
-});
-
-$("go").onclick = generate;
-$("save").onclick = saveNote;
-
-$("raw").value = SAMPLE;
 setMode("signin");
-await loadOptions();
-await initAuth();
-await generate();
+init();
 </script>
 </body>
 </html>
