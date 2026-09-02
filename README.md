@@ -3,6 +3,8 @@
 Typed notes in, handwritten PDF out. Pick a layout, a hand, and paper — get a
 page that reads as genuinely written rather than typeset.
 
+![The editor, with live preview](docs/preview.png)
+
 ## Why it isn't just a handwriting font
 
 Setting text in a handwriting font looks obviously fake: every `a` is identical,
