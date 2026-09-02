@@ -1,9 +1,11 @@
-# Handwritten Notes
+<img width="1439" height="809" alt="Screenshot 2026-09-03 at 12 19 00 AM" src="https://github.com/user-attachments/assets/f583bdff-86b6-409b-b99e-7982c105578c" /># Handwritten Notes
 
 Typed notes in, handwritten PDF out. Pick a layout, a hand, and paper — get a
 page that reads as genuinely written rather than typeset.
 
-![The editor, with live preview](docs/preview.png)
+![The editor, with live preview]
+<img width="1439" height="809" alt="Screenshot 2026-09-03 at 12 19 00 AM" src="https://github.com/user-attachments/assets/58961b8c-1f28-42dc-a8e8-446effda3ab0" />
+
 
 ## Why it isn't just a handwriting font
 
